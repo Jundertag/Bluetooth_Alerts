@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package com.jayden.bluetoothalerts;
+
+option java_package = "com.jayden.bluetoothalerts.proto";
+option java_multiple_files = true;
+
+enum MonitorMode {
+  DEFAULT = 0;
+  PASSIVE = 1;
+  ADAPTIVE = 2;
+  ALWAYS = 3;
+}
+
+message Settings {
+  MonitorMode monitor_mode = 1;
+}
