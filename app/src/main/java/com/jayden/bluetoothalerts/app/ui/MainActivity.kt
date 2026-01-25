@@ -1,68 +1,222 @@
 package com.jayden.bluetoothalerts.app.ui
 
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.runtime.Composable
-import androidx.compose.material3.Text
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.safeGestures
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material3.Divider
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import com.jayden.bluetoothalerts.R
+import com.jayden.bluetoothalerts.app.MainApplication
+import com.jayden.bluetoothalerts.app.viewmodel.MainViewModel
+
+
 
 class MainActivity : AppCompatActivity() {
+    val viewModel: MainViewModel by viewModels(
+        factoryProducer = { (application as MainApplication).mainViewModelFactory }
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MessageCard(Message(author = "Jundertag", message = "this is a testing message and I like compose so far!"))
+            ConstraintLayoutMainActivityContent()
         }
     }
-}
 
-data class Message(val author: String, val message: String)
+    @Composable
+    fun ConstraintLayoutMainActivityContent() {
+        ConstraintLayout(Modifier.fillMaxSize()) {
+            val item = createRef()
+            val radio = createRef()
 
-@Composable
-fun MessageCard(msg: Message) {
-    // Add padding around our message
-    Row(modifier = Modifier.padding(all = 8.dp)) {
-        Image(
-            painter = painterResource(R.drawable.ic_launcher_foreground),
-            contentDescription = "Contact profile picture",
-            modifier = Modifier
-                // Set image size to 40 dp
-                .size(40.dp)
-                // Clip image to be shaped as a circle
-                .clip(CircleShape)
-        )
+            SettingsItem(
+                title = "Option",
+                description = "This does something",
+                modifier = Modifier.constrainAs(item) {
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                }.padding(top = 64.dp),
+                onClick = {}
+            )
 
-        // Add a horizontal space between the image and the column
-        Spacer(modifier = Modifier.width(8.dp))
+            val options = listOf("passive","adaptive","always")
 
-        Column {
-            Text(text = msg.author, color = Color(0xFFFFFFFF))
-            // Add a vertical space between the author and message texts
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = msg.message, color = Color(0xFFFFFFFF))
+            SettingsRadio(
+                title = "Monitor Mode",
+                description = """Passive - The app will not be awake and the OS will wake us up
+                    |Adaptive - The app will wake and launch a service to listen for more granular events, but will die afterwards
+                    |Always - Always keep the app awake
+                """.trimMargin(),
+                options = options,
+                modifier = Modifier.constrainAs(radio) {
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    top.linkTo(item.bottom)
+                },
+                selectedOption = options.first(),
+                onSelectedChange = { op ->
+                }
+            )
         }
     }
-}
 
-@Preview(showSystemUi = true, uiMode = 33,device = "id:pixel_9")
-@Composable
-fun PreviewMessageCard() {
-    MessageCard(
-        msg = Message(author = "jundertag", message = "this is a testing message and I like compose so far!")
-    )
+    @Composable
+    fun SettingsItem(
+        title: String,
+        modifier: Modifier = Modifier,
+        description: String? = null,
+        onClick: ((Boolean) -> Unit)
+    ) {
+        var switchChecked: Boolean by remember { mutableStateOf(false) }
+        Card(
+            modifier = modifier
+                .padding(6.dp)
+                .fillMaxWidth(),
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.onSurface,
+                contentColor = MaterialTheme.colorScheme.surface,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledContentColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Row {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                    if (description != null) {
+                        Text(description, fontSize = 14.sp, modifier = Modifier.padding(4.dp))
+                    }
+                }
+                Switch(checked = switchChecked,
+                    modifier = Modifier.padding(4.dp),
+                    onCheckedChange = {
+                    switchChecked = !switchChecked
+                    onClick(switchChecked)
+                })
+            }
+        }
+    }
+
+    @Composable
+    fun SettingsRadio(
+        title: String,
+        options: List<String>,
+        modifier: Modifier = Modifier,
+        description: String? = null,
+        selectedOption: String?,
+        onSelectedChange: ((String) -> Unit)
+    ) {
+        Card(
+            modifier = modifier
+                .padding(6.dp)
+                .fillMaxWidth(),
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.onSurface,
+                contentColor = MaterialTheme.colorScheme.surface,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledContentColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Column {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 8.dp)
+                )
+
+                if (description != null) {
+                    Text(
+                        text = description,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(start = 6.dp, top = 4.dp, bottom = 4.dp)
+                    )
+                }
+
+                HorizontalDivider(Modifier.padding(8.dp))
+
+                var selected by remember { mutableStateOf(selectedOption) }
+
+                Column(Modifier.selectableGroup().padding(bottom = 2.dp)) {
+                    options.forEach { op ->
+                        val isSelected = (op == selected)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = isSelected,
+                                    onClick = {
+                                        selected = op
+                                        onSelectedChange(op)
+                                    },
+                                    role = Role.RadioButton
+                                )
+                                .padding(horizontal = 6.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(selected = isSelected, onClick = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text(text = op)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Preview(showSystemUi = true, device = "id:pixel_9", uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    fun PreviewCompose() {
+        ConstraintLayoutMainActivityContent()
+    }
 }
