@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.protobuf.option
 import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.MainApplication
 import com.jayden.bluetoothalerts.app.viewmodel.MainViewModel
@@ -76,9 +77,12 @@ class MainActivity : AppCompatActivity() {
             val item = createRef()
             val radio = createRef()
 
+            var optionState by remember { mutableStateOf(false) }
+
             SettingsItem(
                 title = "Option",
                 description = "This does something",
+                switchChecked = optionState,
                 modifier = Modifier.constrainAs(item) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -117,10 +121,10 @@ class MainActivity : AppCompatActivity() {
     fun SettingsItem(
         title: String,
         modifier: Modifier = Modifier,
+        switchChecked: Boolean,
         description: String? = null,
         onClick: ((Boolean) -> Unit)
     ) {
-        var switchChecked: Boolean by remember { mutableStateOf(false) }
         Card(
             modifier = modifier
                 .padding(6.dp)
@@ -147,9 +151,9 @@ class MainActivity : AppCompatActivity() {
                 Switch(checked = switchChecked,
                     modifier = Modifier.padding(4.dp),
                     onCheckedChange = {
-                    switchChecked = !switchChecked
-                    onClick(switchChecked)
-                })
+                        onClick(switchChecked)
+                    }
+                )
             }
         }
     }

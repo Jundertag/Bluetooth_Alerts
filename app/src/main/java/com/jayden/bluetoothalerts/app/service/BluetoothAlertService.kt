@@ -1,7 +1,6 @@
-package com.jayden.bluetoothalerts.app.services
+package com.jayden.bluetoothalerts.app.service
 
 import android.app.Notification
-import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
@@ -9,22 +8,39 @@ import android.os.IBinder
 import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.MainApplication
 
-class BluetoothAlertService : Service() {
+class BluetoothAlertService() : Service() {
+    data class ServiceState(
+        val started: Boolean,
+        val bounded: Boolean,
+        val foregrounded: Boolean
+    )
     inner class LocalBinder : Binder() {
         fun getService(): BluetoothAlertService = this@BluetoothAlertService
     }
 
     private val binder = LocalBinder()
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return if (intent != null && intent.action == ACTION_START && intent.categories.contains(
-                CATEGORY_START_SERVICE
-            )
-        ) {
-            this.binder
+    private var state: ServiceState = ServiceState(started = false, bounded = false, foregrounded = false)
+
+    override fun onBind(intent: Intent): IBinder? {
+        if (intent.action == ACTION_MANAGE) {
+            state = state.copy(bounded = true)
+            return binder
         } else {
-            null
+            return null
         }
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        startForeground(startId, notification)
+        state = state.copy(started = true, foregrounded = true)
+        return START_STICKY
+    }
+
+    override fun onDestroy() {
+        state = state.copy(started = false, bounded = false, foregrounded = false)
+        super.onDestroy()
     }
 
     private val notification: Notification = Notification.Builder(this,NOTIFICATION_ID)
@@ -36,14 +52,10 @@ class BluetoothAlertService : Service() {
         .setCategory(MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID)
         .build()
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(startId, notification)
-        return START_STICKY
-    }
+    fun getState() = this.state
 
     companion object {
         private const val NOTIFICATION_ID = "bluetooth-alert-service"
-        const val ACTION_START = "com.jayden.intent.action.START"
-        const val CATEGORY_START_SERVICE = "com.jayden.intent.category.START_SERVICE"
+        const val ACTION_MANAGE = "com.jayden.intent.action.MANAGE"
     }
 }

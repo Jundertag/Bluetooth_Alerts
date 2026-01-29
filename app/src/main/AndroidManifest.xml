@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <service android:name=".app.services.BluetoothAlertService"
+        <service android:name=".app.service.BluetoothAlertService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
             <intent-filter>
