@@ -1,15 +1,29 @@
 package com.jayden.bluetoothalerts.app.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.jayden.bluetoothalerts.data.repo.SettingsRepository
+import com.jayden.bluetoothalerts.proto.MonitorMode
+import com.jayden.bluetoothalerts.proto.copy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
-class MainViewModel() : ViewModel() {
-    fun onClickMonitorModeSetting(option: String) {
-        // do you know what to do? Just flip the option in store!
-        // but idk how, the different representations of the same information
-        // maybe don't hold many ways to represent information?
-        // just make a way that the main activity doesn't have to lie and there's one way to change it!
+class MainViewModel(
+    private val repo: SettingsRepository
+) : ViewModel() {
+    data class SettingsUiState(
+        val monitorMode: MonitorMode
+    )
+
+    val settingsState = repo.settingsFlow.map {
+        SettingsUiState(it.monitorMode)
     }
-    fun onClickFoo(state: Boolean) { /* TODO: Update UI, this is foo */ }
+
+    fun updateMonitorMode(to: MonitorMode) {
+        viewModelScope.launch {
+            repo.updateSettings { it.toBuilder().setMonitorMode(to).build() }
+        }
+    }
 }

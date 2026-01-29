@@ -16,9 +16,7 @@ private val Context.settingsStore: DataStore<Settings> by dataStore(
 class SettingsDataStore(val context: Context) {
     val settingsFlow: Flow<Settings> = context.settingsStore.data
 
-    suspend fun updateMonitorMode(mode: MonitorMode) {
-        context.settingsStore.updateData { settings ->
-            settings.copy { monitorMode = mode }
-        }
+    suspend fun updateSettings(transform: ((Settings) -> Settings)) {
+        context.settingsStore.updateData(transform)
     }
 }

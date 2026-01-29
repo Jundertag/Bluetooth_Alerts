@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,10 +51,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.MainApplication
 import com.jayden.bluetoothalerts.app.viewmodel.MainViewModel
-
+import com.jayden.bluetoothalerts.proto.MonitorMode
+import kotlinx.coroutines.flow.map
 
 
 class MainActivity : AppCompatActivity() {
@@ -84,7 +87,13 @@ class MainActivity : AppCompatActivity() {
                 onClick = {}
             )
 
-            val options = listOf("passive","adaptive","always")
+            val options = listOf(
+                MonitorMode.PASSIVE to "Passive",
+                MonitorMode.ADAPTIVE to "Adaptive",
+                MonitorMode.ALWAYS to "Always"
+            )
+
+            val selected: MonitorMode by viewModel.settingsState.map { it.monitorMode }.collectAsStateWithLifecycle(MonitorMode.PASSIVE)
 
             SettingsRadio(
                 title = "Monitor Mode",
@@ -98,9 +107,8 @@ class MainActivity : AppCompatActivity() {
                     end.linkTo(parent.end)
                     top.linkTo(item.bottom)
                 },
-                selectedOption = options.first(),
-                onSelectedChange = { op ->
-                }
+                selected = selected,
+                onSelectedChange = viewModel::updateMonitorMode
             )
         }
     }
@@ -147,13 +155,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun SettingsRadio(
+    fun <T : Any> SettingsRadio(
         title: String,
-        options: List<String>,
+        options: List<Pair<T, String>>,
         modifier: Modifier = Modifier,
+        selected: T?,
         description: String? = null,
-        selectedOption: String?,
-        onSelectedChange: ((String) -> Unit)
+        onSelectedChange: ((T) -> Unit)
     ) {
         Card(
             modifier = modifier
@@ -184,32 +192,19 @@ class MainActivity : AppCompatActivity() {
 
                 HorizontalDivider(Modifier.padding(8.dp))
 
-                var selected by remember { mutableStateOf(selectedOption) }
-
-                Column(Modifier.selectableGroup().padding(bottom = 2.dp)) {
-                    options.forEach { op ->
-                        val isSelected = (op == selected)
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .selectable(
-                                    selected = isSelected,
-                                    onClick = {
-                                        selected = op
-                                        onSelectedChange(op)
-                                    },
-                                    role = Role.RadioButton
-                                )
-                                .padding(horizontal = 6.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(selected = isSelected, onClick = null)
-                            Spacer(Modifier.width(8.dp))
-                            Text(text = op)
+                options.forEach { (id, label) ->
+                    Column(modifier = Modifier.clickable { onSelectedChange(id) }) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            RadioButton(
+                                selected = (selected == id),
+                                onClick = { onSelectedChange(id) }
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            Text(label)
                         }
                     }
                 }
+
             }
         }
     }

@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package com.jayden.bluetoothalerts;
-
 option java_package = "com.jayden.bluetoothalerts.proto";
 option java_multiple_files = true;
 
