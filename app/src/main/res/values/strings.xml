@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">Bluetooth Alerts</string>
-    <string name="notification_category_foreground_service_name">Bluetooth Alert Service</string>
-    <string name="notification_category_foreground_service_description">This is a notification category we use to notify you of the Bluetooth Alert Service\'s background presence, you can block this if you prefer it not be shown to you.</string>
     <string name="notification_group_services_name">Services</string>
-    <string name="notification_group_service_description">This group is used to allow us to notify you of our services and to allow us to do said background work, you can block this group if you prefer all our services to not be shown to you.</string>
+    <string name="notification_group_service_description">This group is used to allow us to notify you of our services and to allow us to do said background work.</string>
+    <string name="notification_category_foreground_service_name">Bluetooth Alert Service</string>
+    <string name="notification_category_foreground_service_description">The Alert Service is a Foreground Service Component that requires a notification to be present for the app to be in the \"foreground\", this is to listen for Bluetooth events. You can block this category if you prefer, our service will still be operational.</string>
+    <string name="notification_group_alerts_name">Alerts</string>
+    <string name="notification_group_alerts_description">This group allows us to alert you of state changes in Bluetooth.</string>
+    <string name="notification_category_alert_state_name">State Alerts</string>
+    <string name="notification_category_alert_state_description">Bluetooth State Alerts (e.g., Online, Offline, etc.)</string>
 
     <string name="notification_state_update_title">Bluetooth State Changed to %1$s</string>
     <string name="notification_state_update_desc">Stub!</string>

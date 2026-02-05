@@ -10,6 +10,7 @@ class AppNotificationManager(
     private val ctx: Context
 ) {
     private val notificationManager = ctx.getSystemService(NotificationManager::class.java)
+    private val activeNotifyIds = mutableListOf<Int>()
 
     enum class BluetoothState {
         OFFLINE,
@@ -25,7 +26,7 @@ class AppNotificationManager(
     fun showBluetoothStateNotification(id: Int, state: BluetoothState) {
         val bluetoothStateNotification: Notification = Notification.Builder(
             ctx,
-            MainApplication.NOTIFICATION_STATUS_ALERTS_CHANNEL_ID
+            MainApplication.NOTIFICATION_STATE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
             setContentTitle(
@@ -36,7 +37,14 @@ class AppNotificationManager(
             )
             setContentText(ctx.resources.getString(R.string.notification_state_update_desc))
         }.build() // why do I have to do this
-
+        activeNotifyIds.add(id)
         notificationManager.notify(id, bluetoothStateNotification)
+    }
+
+    fun hideNotification(id: Int) {
+        if (activeNotifyIds.contains(id)) {
+            notificationManager.cancel(id)
+            activeNotifyIds.remove(id)
+        }
     }
 }
