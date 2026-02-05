@@ -45,5 +45,8 @@ class MainApplication : Application() {
     companion object {
         const val NOTIFICATION_SERVICES_GROUP_ID = "services-group"
         const val NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID = "bluetooth-alert-service-channel"
+
+        const val NOTIFICATION_ALERTS_GROUP_ID = "alerts-group"
+        const val NOTIFICATION_STATUS_ALERTS_CHANNEL_ID = "bluetooth-status-alerts-channel"
     }
 }

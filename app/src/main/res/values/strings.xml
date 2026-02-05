@@ -4,4 +4,7 @@
     <string name="notification_category_foreground_service_description">This is a notification category we use to notify you of the Bluetooth Alert Service\'s background presence, you can block this if you prefer it not be shown to you.</string>
     <string name="notification_group_services_name">Services</string>
     <string name="notification_group_service_description">This group is used to allow us to notify you of our services and to allow us to do said background work, you can block this group if you prefer all our services to not be shown to you.</string>
+
+    <string name="notification_state_update_title">Bluetooth State Changed to %1$s</string>
+    <string name="notification_state_update_desc">Stub!</string>
 </resources>
