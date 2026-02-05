@@ -6,10 +6,16 @@ import android.app.NotificationChannelGroup
 import android.app.NotificationManager
 import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.viewmodel.MainViewModelFactory
+import com.jayden.bluetoothalerts.data.repo.SettingsRepository
+import com.jayden.bluetoothalerts.data.source.SettingsDataStore
+import com.jayden.bluetoothalerts.data.source.settingsStore
+import com.jayden.bluetoothalerts.proto.settings
 
 class MainApplication : Application() {
     private val notificationManager = applicationContext.getSystemService(NotificationManager::class.java)
-    val mainViewModelFactory = MainViewModelFactory()
+    val settingsDataStore = SettingsDataStore(applicationContext)
+    val settingsRepository = SettingsRepository(settingsDataStore)
+    val mainViewModelFactory = MainViewModelFactory(settingsRepository)
 
     override fun onCreate() {
         super.onCreate()

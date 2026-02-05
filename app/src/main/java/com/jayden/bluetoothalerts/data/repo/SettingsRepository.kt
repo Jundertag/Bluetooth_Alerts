@@ -10,11 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 
 class SettingsRepository(
-    private val dataStore: SettingsDataStore,
-    private val coroutineScope: CoroutineScope
+    private val dataStore: SettingsDataStore
 ) {
-    val settingsFlow = dataStore.settingsFlow.stateIn(
-        coroutineScope,
+    fun settingsFlow(scope: CoroutineScope) = dataStore.settingsFlow.stateIn(
+        scope,
         SharingStarted.WhileSubscribed(5_000),
         Settings.getDefaultInstance()
     )
