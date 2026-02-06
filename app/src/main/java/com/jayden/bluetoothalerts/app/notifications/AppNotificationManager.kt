@@ -24,7 +24,7 @@ class AppNotificationManager(
     }
 
     fun showBluetoothStateNotification(id: Int, state: BluetoothState) {
-        val bluetoothStateNotification: Notification = Notification.Builder(
+        val bluetoothStateNotification = Notification.Builder(
             ctx,
             MainApplication.NOTIFICATION_STATE_ALERTS_CHANNEL_ID
         ).apply {
@@ -36,7 +36,7 @@ class AppNotificationManager(
                 )
             )
             setContentText(ctx.resources.getString(R.string.notification_state_update_desc))
-        }.build() // why do I have to do this
+        }.build() // here because kotlin doesn't believe type changes from within the apply block.
         activeNotifyIds.add(id)
         notificationManager.notify(id, bluetoothStateNotification)
     }

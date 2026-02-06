@@ -9,6 +9,8 @@
     <string name="notification_category_alert_state_name">State Alerts</string>
     <string name="notification_category_alert_state_description">Bluetooth State Alerts (e.g., Online, Offline, etc.)</string>
 
+    <string name="notification_foreground_service_title">Service is running</string>
+    <string name="notification_foreground_service_description">We are passively listening for events. We will notify you of all events you chose to be notified about!</string>
     <string name="notification_state_update_title">Bluetooth State Changed to %1$s</string>
     <string name="notification_state_update_desc">Stub!</string>
 </resources>

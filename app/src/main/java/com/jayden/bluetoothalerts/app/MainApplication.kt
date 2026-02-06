@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationChannelGroup
 import android.app.NotificationManager
 import com.jayden.bluetoothalerts.R
+import com.jayden.bluetoothalerts.app.notifications.AppNotificationManager
 import com.jayden.bluetoothalerts.app.viewmodel.MainViewModelFactory
 import com.jayden.bluetoothalerts.data.repo.SettingsRepository
 import com.jayden.bluetoothalerts.data.source.SettingsDataStore
@@ -16,6 +17,8 @@ class MainApplication : Application() {
     val settingsDataStore = SettingsDataStore(applicationContext)
     val settingsRepository = SettingsRepository(settingsDataStore)
     val mainViewModelFactory = MainViewModelFactory(settingsRepository)
+
+    val appNotificationManager = AppNotificationManager(applicationContext)
 
     override fun onCreate() {
         super.onCreate()
@@ -50,6 +53,7 @@ class MainApplication : Application() {
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 setShowBadge(false)
+                group = NOTIFICATION_SERVICES_GROUP_ID
                 description =
                     resources.getString(R.string.notification_category_foreground_service_description)
             },
@@ -59,6 +63,7 @@ class MainApplication : Application() {
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 setShowBadge(true)
+                group = NOTIFICATION_ALERTS_GROUP_ID
                 description =
                     resources.getString(R.string.notification_category_alert_state_description)
             }

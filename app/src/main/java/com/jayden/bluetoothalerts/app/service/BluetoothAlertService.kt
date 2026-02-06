@@ -9,53 +9,39 @@ import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.MainApplication
 
 class BluetoothAlertService() : Service() {
-    data class ServiceState(
-        val started: Boolean,
-        val bounded: Boolean,
-        val foregrounded: Boolean
-    )
     inner class LocalBinder : Binder() {
         fun getService(): BluetoothAlertService = this@BluetoothAlertService
     }
 
     private val binder = LocalBinder()
 
-    private var state: ServiceState = ServiceState(started = false, bounded = false, foregrounded = false)
+    private val appNotifyManager = (application as MainApplication).appNotificationManager
 
-    override fun onBind(intent: Intent): IBinder? {
-        if (intent.action == ACTION_MANAGE) {
-            state = state.copy(bounded = true)
-            return binder
-        } else {
-            return null
-        }
+    override fun onBind(intent: Intent): IBinder {
+        return binder
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
         startForeground(startId, notification)
-        state = state.copy(started = true, foregrounded = true)
         return START_STICKY
     }
 
-    override fun onDestroy() {
-        state = state.copy(started = false, bounded = false, foregrounded = false)
-        super.onDestroy()
+    fun stop() {
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
-    private val notification: Notification = Notification.Builder(this,NOTIFICATION_ID)
-        .setContentTitle("Service is running")
-        .setContentText("We are passively listening for events. We will notify you of all events you chose to be notified about!")
+    private val notification: Notification = Notification.Builder(this,
+        MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID)
+        .setContentTitle(resources.getString(R.string.notification_foreground_service_title))
+        .setContentText(resources.getString(R.string.notification_foreground_service_description))
         .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setCategory(Notification.CATEGORY_SERVICE)
         .setLocalOnly(true)
         .setShowWhen(false)
-        .setCategory(MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID)
         .build()
 
-    fun getState() = this.state
-
     companion object {
-        private const val NOTIFICATION_ID = "bluetooth-alert-service"
-        const val ACTION_MANAGE = "com.jayden.intent.action.MANAGE"
+
     }
 }
