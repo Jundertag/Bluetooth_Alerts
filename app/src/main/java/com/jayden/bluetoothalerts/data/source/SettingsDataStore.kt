@@ -8,7 +8,7 @@ import com.jayden.bluetoothalerts.proto.Settings
 import com.jayden.bluetoothalerts.proto.copy
 import kotlinx.coroutines.flow.Flow
 
-private val Context.settingsStore: DataStore<Settings> by dataStore(
+val Context.settingsStore: DataStore<Settings> by dataStore(
     fileName = "settings.pb",
     serializer = SettingsSerializer
 )
