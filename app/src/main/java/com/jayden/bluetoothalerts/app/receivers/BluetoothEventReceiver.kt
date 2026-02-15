@@ -53,8 +53,18 @@ class BluetoothEventReceiver : BroadcastReceiver() {
                 } else {
                     "<missing-permission BLUETOOTH_CONNECT>"
                 }
-                val address: String? = if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                val address = if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
                     device?.address
+                } else {
+                    "<missing-permission BLUETOOTH_CONNECT>"
+                }
+
+                val alias = if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        device?.alias
+                    } else {
+                        "<upgrade-android-version>"
+                    }
                 } else {
                     "<missing-permission BLUETOOTH_CONNECT>"
                 }
@@ -64,8 +74,9 @@ class BluetoothEventReceiver : BroadcastReceiver() {
                     context.applicationContext,
                     AppNotificationManager.BLUETOOTH_CONNECTION_NOTIFY_ID + deviceName.hashCode(),
                     AppNotificationManager.BluetoothConnectionState.fromId(connectionState)!!,
+                    address,
                     deviceName,
-                    address
+                    alias
                 )
             }
             BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
@@ -86,6 +97,34 @@ class BluetoothEventReceiver : BroadcastReceiver() {
                     context.applicationContext,
                     AppNotificationManager.BLUETOOTH_DISCOVERY_STATE_ID,
                     AppNotificationManager.BluetoothDiscoveryState.FINISHED
+                )
+            }
+            BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED -> {
+                Log.d(TAG, "Received ACTION_LOCAL_NAME_CHANGED Event")
+
+                val newName = intent.getStringExtra(BluetoothAdapter.EXTRA_LOCAL_NAME)
+
+                Log.i(TAG, "Notifying user of Bluetooth Local Name Change")
+                AppNotificationManager.showBluetoothLocalNameChangeNotification(
+                    context.applicationContext,
+                    AppNotificationManager.BLUETOOTH_LOCAL_NAME_NOTIFY_ID,
+                    newName
+                )
+            }
+            BluetoothAdapter.ACTION_SCAN_MODE_CHANGED -> {
+                Log.d(TAG, "Received ACTION_SCAN_MODE_CHANGED Event")
+
+                val scanMode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.ERROR)
+                if (scanMode == BluetoothAdapter.ERROR) {
+                    Log.i(TAG, "Bluetooth scan mode returned an error, ignoring")
+                    return
+                }
+
+                Log.i(TAG, "Notifying user of Bluetooth Scan Mode Change")
+                AppNotificationManager.showBluetoothScanModeChangeNotification(
+                    context.applicationContext,
+                    AppNotificationManager.BLUETOOTH_SCAN_MODE_NOTIFY_ID,
+                    AppNotificationManager.BluetoothScanMode.fromId(scanMode)!!
                 )
             }
             else -> {}

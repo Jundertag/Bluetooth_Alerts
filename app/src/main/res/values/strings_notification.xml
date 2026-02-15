@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- groups/channels -->
+    <string name="notification_group_services_name">Services</string>
+    <string name="notification_group_service_description">This group is used to allow us to notify you of our services and to allow us to do said background work.</string>
+
+    <string name="notification_category_foreground_service_name">Bluetooth Alert Service</string>
+    <string name="notification_category_foreground_service_description">The Alert Service is a Foreground Service Component that requires a notification to be present for the app to be in the \"foreground\", this is to listen for Bluetooth events.</string>
+
+    <string name="notification_group_alerts_name">Alerts</string>
+    <string name="notification_group_alerts_description">This group allows us to alert you of state changes in Bluetooth.</string>
+
+    <string name="notification_category_alert_state_name">State Alerts</string>
+    <string name="notification_category_alert_state_description">Bluetooth State Alerts (e.g., Online, Offline, etc.)</string>
+
+    <string name="notification_category_alert_connection_state_name">Connection State Alerts</string>
+    <string name="notification_category_alert_connection_state_description">Bluetooth Connection State Alerts (e.g., Connected Device, Disconnected Device, etc.)</string>
+
+    <string name="notification_category_alert_discovery_state_name">Discovery State Alerts</string>
+    <string name="notification_category_alert_discovery_state_description">Bluetooth Discovery Alerts (Scanning for Advertising Devices)</string>
+
+    <string name="notification_category_alert_local_name_change_name">Bluetooth Local Name Change Alerts</string>
+    <string name="notification_category_alert_local_name_change_description">Alerts for Name Changes of the Local Adapter (what others see as your Bluetooth name)</string>
+
+    <string name="notification_category_alert_scan_mode_change_name">Bluetooth Scan Mode Change Alerts</string>
+    <string name="notification_category_alert_scan_mode_change_description">Scan Mode Change Alerts (e.g., None, Connectable, Connectable Discoverable, etc.)</string>
+
+    <!-- notification title/text -->
+    <string name="notification_foreground_service_title">Service is running</string>
+    <string name="notification_foreground_service_description">We are passively listening for events. We will notify you of all events you chose to be notified about!</string>
+
+    <string name="notification_state_update_title">Bluetooth State Changed to %1$s</string>
+    <string name="notification_state_update_desc">Stub!</string>
+
+    <string name="notification_connection_state_update_title">Bluetooth Device %1$s</string>
+    <string name="notification_connection_state_update_desc">Address: %1$s\nDevice Name: %2$s\nAlias: %3$s</string>
+
+    <string name="notification_discovery_state_update_title">Bluetooth Discovery State Changed to %1$s</string>
+    <string name="notification_discovery_state_update_desc">Stub!</string>
+
+    <string name="notification_local_name_update_title">Bluetooth Local Name Changed!</string>
+    <string name="notification_local_name_update_desc">New Name: %1$s</string>
+
+    <string name="notification_scan_mode_update_title">Bluetooth Scan Mode Changed!</string>
+    <string name="notification_scan_mode_update_desc">Scan Mode Changed to: %1$s</string>
+</resources>

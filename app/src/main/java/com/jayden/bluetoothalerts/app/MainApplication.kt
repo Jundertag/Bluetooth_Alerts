@@ -90,6 +90,22 @@ class MainApplication : Application() {
             ).apply {
                 group = NOTIFICATION_ALERTS_GROUP_ID
                 description = resources.getString(R.string.notification_category_alert_discovery_state_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_LOCAL_NAME_CHANGE_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_alert_local_name_change_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_alert_local_name_change_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_SCAN_MODE_CHANGE_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_alert_scan_mode_change_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_alert_scan_mode_change_description)
             }
         )
 
@@ -106,5 +122,7 @@ class MainApplication : Application() {
         const val NOTIFICATION_STATE_ALERTS_CHANNEL_ID = "bluetooth-state-alerts-channel"
         const val NOTIFICATION_CONNECTION_STATE_ALERTS_CHANNEL_ID = "bluetooth-connection-state-alerts-channel"
         const val NOTIFICATION_DISCOVERY_STATE_ALERTS_CHANNEL_ID = "bluetooth-discovery-state-alerts-channel"
+        const val NOTIFICATION_LOCAL_NAME_CHANGE_ALERTS_CHANNEL_ID = "bluetooth-local-name-change-alerts-channel"
+        const val NOTIFICATION_SCAN_MODE_CHANGE_ALERTS_CHANNEL_ID = "bluetooth-scan-mode-change-alerts-channel"
     }
 }
