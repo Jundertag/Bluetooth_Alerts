@@ -85,8 +85,9 @@ class AppNotificationManager(
         const val BLUETOOTH_LOCAL_NAME_NOTIFY_ID = 3
         const val BLUETOOTH_SCAN_MODE_NOTIFY_ID = 4
         const val BLUETOOTH_CONNECTION_NOTIFY_ID = 2048
+        private fun getNotifyManager(ctx: Context): NotificationManager = ctx.getSystemService(NotificationManager::class.java)
         fun showBluetoothStateNotification(ctx: Context, id: Int, state: BluetoothState) {
-            val notificationManager = ctx.getSystemService(NotificationManager::class.java)
+            val notificationManager = getNotifyManager(ctx)
             val bluetoothStateNotification = Notification.Builder(
                 ctx,
                 MainApplication.NOTIFICATION_STATE_ALERTS_CHANNEL_ID
@@ -104,7 +105,7 @@ class AppNotificationManager(
             notificationManager.notify(id, bluetoothStateNotification)
         }
         fun showBluetoothDiscoveryStateNotification(ctx: Context, id: Int, state: BluetoothDiscoveryState) {
-            val notificationManager = ctx.getSystemService(NotificationManager::class.java)
+            val notificationManager = getNotifyManager(ctx)
             val bluetoothDiscoveryStateNotification = Notification.Builder(
                 ctx,
                 MainApplication.NOTIFICATION_DISCOVERY_STATE_ALERTS_CHANNEL_ID
@@ -119,7 +120,7 @@ class AppNotificationManager(
             notificationManager.notify(id, bluetoothDiscoveryStateNotification)
         }
         fun showBluetoothLocalNameChangeNotification(ctx: Context, id: Int, newName: String?) {
-            val notificationManager = ctx.getSystemService(NotificationManager::class.java)
+            val notificationManager = getNotifyManager(ctx)
             val bluetoothLocalNameChangeNotification = Notification.Builder(
                 ctx,
                 MainApplication.NOTIFICATION_LOCAL_NAME_CHANGE_ALERTS_CHANNEL_ID
@@ -136,7 +137,7 @@ class AppNotificationManager(
             notificationManager.notify(id, bluetoothLocalNameChangeNotification)
         }
         fun showBluetoothScanModeChangeNotification(ctx: Context, id: Int, state: BluetoothScanMode) {
-            val notificationManager = ctx.getSystemService(NotificationManager::class.java)
+            val notificationManager = getNotifyManager(ctx)
             val bluetoothScanModeChangeNotification = Notification.Builder(
                 ctx,
                 MainApplication.NOTIFICATION_SCAN_MODE_CHANGE_ALERTS_CHANNEL_ID
@@ -153,7 +154,7 @@ class AppNotificationManager(
             notificationManager.notify(id, bluetoothScanModeChangeNotification)
         }
         fun showBluetoothConnectionStateNotification(ctx: Context, id: Int, state: BluetoothConnectionState, address: String?, deviceName: String?, alias: String?) {
-            val notificationManager = ctx.getSystemService(NotificationManager::class.java)
+            val notificationManager = getNotifyManager(ctx)
             val bluetoothConnectionStateNotification = Notification.Builder(
                 ctx,
                 MainApplication.NOTIFICATION_CONNECTION_STATE_ALERTS_CHANNEL_ID

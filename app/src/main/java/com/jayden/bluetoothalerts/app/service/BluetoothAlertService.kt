@@ -11,8 +11,19 @@ import android.util.Log
 import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.MainApplication
 import com.jayden.bluetoothalerts.app.receivers.BluetoothEventReceiver
+import com.jayden.bluetoothalerts.data.source.settingsStore
+import com.jayden.bluetoothalerts.proto.MonitorMode
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 class BluetoothAlertService : Service() {
+    private val serviceJob = SupervisorJob()
+    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
     inner class LocalBinder : Binder() {
         fun getService(): BluetoothAlertService = this@BluetoothAlertService
     }
@@ -27,29 +38,48 @@ class BluetoothAlertService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand(intent = $intent, flags = $flags, startId = $startId)")
-        val notification: Notification = Notification.Builder(
-            this,
-            MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID
-        )
-            .setContentTitle(resources.getString(R.string.notification_foreground_service_title))
-            .setContentText(resources.getString(R.string.notification_foreground_service_description))
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .setLocalOnly(true)
-            .setShowWhen(false)
-            .build()
 
-        Log.i(TAG, "Service moving to foreground with id of: $FOREGROUND_ID")
-        startForeground(FOREGROUND_ID, notification)
-        Log.i(TAG, "Registering event receiver")
-        registerReceiver(eventReceiver, IntentFilter().apply {
-            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
-            addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)
-            addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
-            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-            addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED)
-            addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
-        })
+        val settingsRepo = (application as MainApplication).settingsRepository
+        serviceScope.launch {
+            settingsRepo.settingsFlow(this).map { it.monitorMode }.collect { monitorMode ->
+                when (monitorMode) {
+                    MonitorMode.ALWAYS -> {
+                        val notification: Notification = Notification.Builder(
+                            this@BluetoothAlertService,
+                            MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID
+                        )
+                            .setContentTitle(resources.getString(R.string.notification_foreground_service_title))
+                            .setContentText(resources.getString(R.string.notification_foreground_service_description))
+                            .setSmallIcon(R.drawable.ic_launcher_foreground)
+                            .setCategory(Notification.CATEGORY_SERVICE)
+                            .setLocalOnly(true)
+                            .setShowWhen(false)
+                            .build()
+
+                        Log.i(TAG, "Service moving to foreground with id of: $FOREGROUND_ID")
+                        startForeground(FOREGROUND_ID, notification)
+                        Log.i(TAG, "Registering event receiver")
+                        registerReceiver(eventReceiver, IntentFilter().apply {
+                            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+                            addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)
+                            addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+                            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+                            addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED)
+                            addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
+                        })
+                    }
+                    MonitorMode.ADAPTIVE -> {
+
+                    }
+                    MonitorMode.PASSIVE -> {
+                        stop()
+                    }
+                    else -> stop()
+                }
+            }
+        }
+
+
         return START_STICKY
     }
 
@@ -57,6 +87,7 @@ class BluetoothAlertService : Service() {
         Log.i(TAG, "onDestroy")
         Log.i(TAG, "Unregistering event receiver")
         unregisterReceiver(eventReceiver)
+        serviceJob.cancel()
         super.onDestroy()
     }
 
