@@ -1,18 +1,12 @@
 package com.jayden.bluetoothalerts.app.ui
 
-import android.Manifest
-import android.bluetooth.BluetoothManager
-import android.content.ComponentName
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.IBinder
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,9 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -86,23 +76,21 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun ConstraintLayoutMainActivityContent() {
         ConstraintLayout(Modifier.fillMaxSize()) {
-            val item = createRef()
-            val radio = createRef()
-            val testButton = createRef()
+            val enableForegroundServiceRef = createRef()
+            val monitorModeRef = createRef()
 
-            var optionState by remember { mutableStateOf(false) }
+            val optionState: Boolean by viewModel.settingsForegroundServiceEnabled.collectAsStateWithLifecycle(false)
 
-            /*SettingsItem(
-                title = "Option",
-                description = "This does something",
-                switchChecked = optionState,
-                modifier = Modifier.constrainAs(item) {
+            SettingsItem(title = "Enable Foreground Service",
+                description = "By checking this option, you are allowing us to use a foreground service to keep us in the foreground. We will only use this to monitor Bluetooth state.",
+                modifier = Modifier.constrainAs(enableForegroundServiceRef) {
+                    top.linkTo(monitorModeRef.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                }.padding(top = 64.dp),
-                onClick = {}
-            )*/
+                },
+                switchChecked = optionState,
+                onClick = viewModel::updateForegroundServiceEnabled
+            )
 
             val options = listOf(
                 MonitorMode.PASSIVE to "Passive",
@@ -119,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                     |Always - Always keep the app awake
                 """.trimMargin(),
                 options = options,
-                modifier = Modifier.constrainAs(radio) {
+                modifier = Modifier.constrainAs(monitorModeRef) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
@@ -149,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                 disabledContentColor = MaterialTheme.colorScheme.surfaceVariant
             )
         ) {
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(
                         title,
@@ -164,7 +152,7 @@ class MainActivity : AppCompatActivity() {
                 Switch(checked = switchChecked,
                     modifier = Modifier.padding(4.dp),
                     onCheckedChange = {
-                        onClick(switchChecked)
+                        onClick(it)
                     }
                 )
             }

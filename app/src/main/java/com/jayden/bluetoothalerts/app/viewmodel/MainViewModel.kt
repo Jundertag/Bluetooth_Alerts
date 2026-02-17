@@ -13,18 +13,26 @@ class MainViewModel(
     private val settingsRepo: SettingsRepository
 ) : ViewModel() {
     data class SettingsUiState(
-        val monitorMode: MonitorMode
+        val monitorMode: MonitorMode,
+        val foregroundServiceEnabled: Boolean
     )
 
     private val settingsState = settingsRepo.settingsFlow(viewModelScope).map {
-        SettingsUiState(it.monitorMode)
+        SettingsUiState(it.monitorMode, it.foregroundServiceEnabled)
     }
 
     val settingsMonitorMode = settingsState.map { it.monitorMode }
+    val settingsForegroundServiceEnabled = settingsState.map { it.foregroundServiceEnabled }
 
     fun updateMonitorMode(to: MonitorMode) {
         viewModelScope.launch {
             settingsRepo.updateSettings { it.toBuilder().setMonitorMode(to).build() }
+        }
+    }
+
+    fun updateForegroundServiceEnabled(to: Boolean) {
+        viewModelScope.launch {
+            settingsRepo.updateSettings { it.toBuilder().setForegroundServiceEnabled(to).build() }
         }
     }
 }

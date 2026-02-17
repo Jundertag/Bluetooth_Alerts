@@ -11,4 +11,5 @@ enum MonitorMode {
 
 message Settings {
   MonitorMode monitor_mode = 1;
+  bool foreground_service_enabled = 2;
 }
