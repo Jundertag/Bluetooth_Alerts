@@ -10,7 +10,7 @@ class BootReceiver : BroadcastReceiver() {
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED -> {
                 val serviceIntent = Intent(context, BluetoothAlertService::class.java)
-                context.startForegroundService(serviceIntent)
+                context.startService(serviceIntent)
             }
             else -> return
         }

@@ -67,23 +67,17 @@ class MainActivity : AppCompatActivity() {
 
                 val serviceIntent = Intent(applicationContext, BluetoothAlertService::class.java)
                 if (shouldLaunchService) {
+                    Log.d(TAG, "Starting BluetoothAlertService as monitorMode == ${monitorMode.name}")
                     startService(serviceIntent)
                 } else {
-                    val conn = object : ServiceConnection {
-                        override fun onServiceConnected(
-                            name: ComponentName?,
-                            service: IBinder?
-                        ) {
-                            Log.i(TAG, "stopping service via interface method")
-                            (service as? BluetoothAlertService.LocalBinder)?.getService()?.stop()
-                        }
-
-                        override fun onServiceDisconnected(name: ComponentName?) {
-                        }
-
+                    val serviceIntent = Intent(applicationContext, BluetoothAlertService::class.java)
+                    val stopped = stopService(serviceIntent)
+                    if (stopped) {
+                        // service is likely already stopped;
+                        Log.d(TAG, "BluetoothAlertService already stopped.")
+                    } else {
+                        Log.d(TAG, "Stopped BluetoothAlertService.")
                     }
-
-                    bindService(serviceIntent, conn, BIND_AUTO_CREATE)
                 }
             }
         }

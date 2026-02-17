@@ -35,15 +35,17 @@ class BluetoothAlertService : Service() {
     }
 
     val eventReceiver = BluetoothEventReceiver()
+    var eventReceiverRegistered = false
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand(intent = $intent, flags = $flags, startId = $startId)")
 
         val settingsRepo = (application as MainApplication).settingsRepository
         serviceScope.launch {
-            settingsRepo.settingsFlow(this).map { it.monitorMode }.collect { monitorMode ->
-                when (monitorMode) {
+            settingsRepo.settingsFlow(this).collect { settings ->
+                when (settings.monitorMode) {
                     MonitorMode.ALWAYS -> {
+                        Log.i(TAG, "MonitorMode == ALWAYS")
                         val notification: Notification = Notification.Builder(
                             this@BluetoothAlertService,
                             MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID
@@ -67,11 +69,16 @@ class BluetoothAlertService : Service() {
                             addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED)
                             addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
                         })
+                        eventReceiverRegistered = true
                     }
                     MonitorMode.PASSIVE -> {
-                        stop()
+                        Log.i(TAG, "MonitorMode == PASSIVE")
+                        stopForeground(STOP_FOREGROUND_REMOVE)
+                        stopSelf()
                     }
-                    else -> stop()
+                    else -> {
+                        Log.i(TAG, "MonitorMode == ${settings.monitorMode.name}")
+                    }
                 }
             }
         }
@@ -82,7 +89,10 @@ class BluetoothAlertService : Service() {
     override fun onDestroy() {
         Log.i(TAG, "onDestroy")
         Log.i(TAG, "Unregistering event receiver")
-        unregisterReceiver(eventReceiver)
+        if (eventReceiverRegistered) {
+            unregisterReceiver(eventReceiver)
+            eventReceiverRegistered = false
+        }
         serviceJob.cancel()
         super.onDestroy()
     }
