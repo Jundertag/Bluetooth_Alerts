@@ -52,12 +52,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.settingsMonitorMode.collect { monitorMode ->
-                val shouldLaunchService = (monitorMode == MonitorMode.ALWAYS)
-
+            viewModel.settingsForegroundServiceEnabled.collect { shouldLaunchService ->
                 val serviceIntent = Intent(applicationContext, BluetoothAlertService::class.java)
                 if (shouldLaunchService) {
-                    Log.d(TAG, "Starting BluetoothAlertService as monitorMode == ${monitorMode.name}")
+                    Log.d(TAG, "Starting BluetoothAlertService as foregroundServiceEnabled == true")
                     startService(serviceIntent)
                 } else {
                     val serviceIntent = Intent(applicationContext, BluetoothAlertService::class.java)

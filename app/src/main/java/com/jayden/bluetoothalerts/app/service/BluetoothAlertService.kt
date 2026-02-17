@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.util.Log
 import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.MainApplication
+import com.jayden.bluetoothalerts.app.receivers.BluetoothDeviceEventReceiver
 import com.jayden.bluetoothalerts.app.receivers.BluetoothEventReceiver
 import com.jayden.bluetoothalerts.data.source.settingsStore
 import com.jayden.bluetoothalerts.proto.MonitorMode
@@ -35,6 +36,7 @@ class BluetoothAlertService : Service() {
     }
 
     val eventReceiver = BluetoothEventReceiver()
+    val deviceEventReceiver = BluetoothDeviceEventReceiver()
     var eventReceiverRegistered = false
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -43,42 +45,37 @@ class BluetoothAlertService : Service() {
         val settingsRepo = (application as MainApplication).settingsRepository
         serviceScope.launch {
             settingsRepo.settingsFlow(this).collect { settings ->
-                when (settings.monitorMode) {
-                    MonitorMode.ALWAYS -> {
-                        Log.i(TAG, "MonitorMode == ALWAYS")
-                        val notification: Notification = Notification.Builder(
-                            this@BluetoothAlertService,
-                            MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID
-                        ).apply {
-                            setContentTitle(resources.getString(R.string.notification_foreground_service_title))
-                            setContentText(resources.getString(R.string.notification_foreground_service_description))
-                            setSmallIcon(R.drawable.ic_launcher_foreground)
-                            setCategory(Notification.CATEGORY_SERVICE)
-                            setLocalOnly(true)
-                            setShowWhen(false)
-                        }.build()
+                if (settings.foregroundServiceEnabled) {
+                    Log.i(TAG, "foregroundServiceEnabled == true")
+                    val notification: Notification = Notification.Builder(
+                        this@BluetoothAlertService,
+                        MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID
+                    ).apply {
+                        setContentTitle(resources.getString(R.string.notification_foreground_service_title))
+                        setContentText(resources.getString(R.string.notification_foreground_service_description))
+                        setSmallIcon(R.drawable.ic_launcher_foreground)
+                        setCategory(Notification.CATEGORY_SERVICE)
+                        setLocalOnly(true)
+                        setShowWhen(false)
+                    }.build()
 
-                        Log.i(TAG, "Service moving to foreground with id of: $FOREGROUND_ID")
-                        startForeground(FOREGROUND_ID, notification)
-                        Log.i(TAG, "Registering event receiver")
-                        registerReceiver(eventReceiver, IntentFilter().apply {
-                            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
-                            addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)
-                            addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
-                            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-                            addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED)
-                            addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
-                        })
-                        eventReceiverRegistered = true
-                    }
-                    MonitorMode.PASSIVE -> {
-                        Log.i(TAG, "MonitorMode == PASSIVE")
-                        stopForeground(STOP_FOREGROUND_REMOVE)
-                        stopSelf()
-                    }
-                    else -> {
-                        Log.i(TAG, "MonitorMode == ${settings.monitorMode.name}")
-                    }
+                    Log.i(TAG, "Service moving to foreground with id of: $FOREGROUND_ID")
+                    startForeground(FOREGROUND_ID, notification)
+                    Log.i(TAG, "Registering event receivers")
+                    registerReceiver(eventReceiver, IntentFilter().apply {
+                        addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+                        addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)
+                        addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+                        addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+                        addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED)
+                        addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
+                    })
+                    registerReceiver(deviceEventReceiver, IntentFilter().apply {
+
+                    })
+                    eventReceiverRegistered = true
+                } else {
+                    Log.i(TAG, "foregroundServiceEnabled == ${settings.foregroundServiceEnabled}")
                 }
             }
         }

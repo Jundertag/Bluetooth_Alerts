@@ -1,5 +1,6 @@
 package com.jayden.bluetoothalerts.app.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jayden.bluetoothalerts.data.repo.SettingsRepository
@@ -25,14 +26,20 @@ class MainViewModel(
     val settingsForegroundServiceEnabled = settingsState.map { it.foregroundServiceEnabled }
 
     fun updateMonitorMode(to: MonitorMode) {
+        Log.d(TAG, "updateMonitorMode(MonitorMode.${to.name})")
         viewModelScope.launch {
             settingsRepo.updateSettings { it.toBuilder().setMonitorMode(to).build() }
         }
     }
 
     fun updateForegroundServiceEnabled(to: Boolean) {
+        Log.d(TAG, "updateForegroundServiceEnabled($to)")
         viewModelScope.launch {
             settingsRepo.updateSettings { it.toBuilder().setForegroundServiceEnabled(to).build() }
         }
+    }
+
+    companion object {
+        private const val TAG = "MainViewModel"
     }
 }
