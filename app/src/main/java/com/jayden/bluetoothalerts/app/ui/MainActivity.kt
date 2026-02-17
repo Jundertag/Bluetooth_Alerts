@@ -112,7 +112,6 @@ class MainActivity : AppCompatActivity() {
 
             val options = listOf(
                 MonitorMode.PASSIVE to "Passive",
-                MonitorMode.ADAPTIVE to "Adaptive",
                 MonitorMode.ALWAYS to "Always"
             )
 
@@ -123,7 +122,6 @@ class MainActivity : AppCompatActivity() {
             SettingsRadio(
                 title = "Monitor Mode",
                 description = """Passive - The app will not be awake and the OS will wake this app up
-                    |Adaptive - The app will wake and launch a service to listen for more granular events, but will die afterwards
                     |Always - Always keep the app awake
                 """.trimMargin(),
                 options = options,

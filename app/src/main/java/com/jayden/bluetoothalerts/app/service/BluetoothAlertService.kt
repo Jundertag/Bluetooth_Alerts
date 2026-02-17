@@ -47,14 +47,14 @@ class BluetoothAlertService : Service() {
                         val notification: Notification = Notification.Builder(
                             this@BluetoothAlertService,
                             MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID
-                        )
-                            .setContentTitle(resources.getString(R.string.notification_foreground_service_title))
-                            .setContentText(resources.getString(R.string.notification_foreground_service_description))
-                            .setSmallIcon(R.drawable.ic_launcher_foreground)
-                            .setCategory(Notification.CATEGORY_SERVICE)
-                            .setLocalOnly(true)
-                            .setShowWhen(false)
-                            .build()
+                        ).apply {
+                            setContentTitle(resources.getString(R.string.notification_foreground_service_title))
+                            setContentText(resources.getString(R.string.notification_foreground_service_description))
+                            setSmallIcon(R.drawable.ic_launcher_foreground)
+                            setCategory(Notification.CATEGORY_SERVICE)
+                            setLocalOnly(true)
+                            setShowWhen(false)
+                        }.build()
 
                         Log.i(TAG, "Service moving to foreground with id of: $FOREGROUND_ID")
                         startForeground(FOREGROUND_ID, notification)
@@ -68,9 +68,6 @@ class BluetoothAlertService : Service() {
                             addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
                         })
                     }
-                    MonitorMode.ADAPTIVE -> {
-
-                    }
                     MonitorMode.PASSIVE -> {
                         stop()
                     }
@@ -78,7 +75,6 @@ class BluetoothAlertService : Service() {
                 }
             }
         }
-
 
         return START_STICKY
     }
