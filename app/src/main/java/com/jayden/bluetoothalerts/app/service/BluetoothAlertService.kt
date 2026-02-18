@@ -3,24 +3,21 @@ package com.jayden.bluetoothalerts.app.service
 import android.app.Notification
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.MainApplication
 import com.jayden.bluetoothalerts.app.receivers.BluetoothDeviceEventReceiver
 import com.jayden.bluetoothalerts.app.receivers.BluetoothEventReceiver
-import com.jayden.bluetoothalerts.data.source.settingsStore
-import com.jayden.bluetoothalerts.proto.MonitorMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 
 class BluetoothAlertService : Service() {
     private val serviceJob = SupervisorJob()
@@ -52,7 +49,7 @@ class BluetoothAlertService : Service() {
                         MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID
                     ).apply {
                         setContentTitle(resources.getString(R.string.notification_foreground_service_title))
-                        setContentText(resources.getString(R.string.notification_foreground_service_description))
+                        setContentText(resources.getString(R.string.notification_foreground_service_desc))
                         setSmallIcon(R.drawable.ic_launcher_foreground)
                         setCategory(Notification.CATEGORY_SERVICE)
                         setLocalOnly(true)
@@ -71,8 +68,28 @@ class BluetoothAlertService : Service() {
                         addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
                     })
                     registerReceiver(deviceEventReceiver, IntentFilter().apply {
-
-                    })
+                        addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+                        addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+                        addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            addAction(BluetoothDevice.ACTION_ALIAS_CHANGED)
+                        }
+                        addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+                        addAction(BluetoothDevice.ACTION_CLASS_CHANGED)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                            addAction(BluetoothDevice.ACTION_ENCRYPTION_CHANGE)
+                        }
+                        addAction(BluetoothDevice.ACTION_FOUND)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                            addAction(BluetoothDevice.ACTION_KEY_MISSING)
+                        }
+                        addAction(BluetoothDevice.ACTION_NAME_CHANGED)
+                        addAction(BluetoothDevice.ACTION_PAIRING_REQUEST)
+                        addAction(BluetoothDevice.ACTION_UUID)
+                    }, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        RECEIVER_NOT_EXPORTED
+                    } else 0
+                    )
                     eventReceiverRegistered = true
                 } else {
                     Log.i(TAG, "foregroundServiceEnabled == ${settings.foregroundServiceEnabled}")

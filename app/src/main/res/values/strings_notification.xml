@@ -25,9 +25,48 @@
     <string name="notification_category_alert_scan_mode_change_name">Bluetooth Scan Mode Change Alerts</string>
     <string name="notification_category_alert_scan_mode_change_description">Scan Mode Change Alerts (e.g., None, Connectable, Connectable Discoverable, etc.)</string>
 
+    <string name="notification_group_device_alerts_name">Device Alerts</string>
+    <string name="notification_group_device_alerts_description">This group allows us to alert you of state changes in Bluetooth Devices</string>
+
+    <string name="notification_category_device_acl_connected_name">Bluetooth Device Connected Alerts</string>
+    <string name="notification_category_device_acl_connected_description">Device Connection Alerts as reported by the ACL protocol.</string>
+
+    <string name="notification_category_device_acl_disconnected_name">Bluetooth Device Disconnected Alerts</string>
+    <string name="notification_category_device_acl_disconnected_description">Device Disconnection Alerts as reported by the ACL protocol.</string>
+
+    <string name="notification_category_device_acl_disconnect_request_name">Bluetooth Device Disconnect Request Alerts</string>
+    <string name="notification_category_device_acl_disconnect_request_description">Device Disconnect Request Alerts as reported by the ACL protocol.</string>
+
+    <string name="notification_category_device_alias_changed_name">Bluetooth Device Alias Changed Alerts</string>
+    <string name="notification_category_device_alias_changed_description">Device Alias Changed Alerts. The alias is a separate field locally-modifiable by you, this is not known to other devices that are paired to a Device. A Device can change this for you.</string>
+
+    <string name="notification_category_device_bond_state_changed_name">Bluetooth Device Bond State Changed Alerts</string>
+    <string name="notification_category_device_bond_state_changed_description">Bond State refers to the bonding process (pairing status). A device can not be paired (None), be pairing (Bonding), and be paired to your device (Bonded).</string>
+
+    <string name="notification_category_device_class_changed_name">Bluetooth Device Class Changed Alerts</string>
+    <string name="notification_category_device_class_changed_description">A Bluetooth Class is a way that Bluetooth Devices are Classified (what they generally are), the device could be a Mouse and Keyboard, Headphones, Earbuds, Medical Devices, Microphones, etc.</string>
+
+    <string name="notification_category_device_encryption_changed_name">Bluetooth Device Encryption Change Alerts</string>
+    <string name="notification_category_device_encryption_changed_description">Encryption Alert contains the algorithm, state, key size, and transport. Only available on API 36 (Android 16; Baklava)</string>
+
+    <string name="notification_category_device_found_name">Bluetooth Device Found Alerts</string>
+    <string name="notification_category_device_found_description">Alerts when a device has been found in the discovery of other advertising bluetooth devices.</string>
+
+    <string name="notification_category_device_key_missing_name">Bluetooth Device Key Missing Alerts</string>
+    <string name="notification_category_device_key_missing_description">Keys, referring to the ones that establish an encrypted channel 2 bluetooth devices communicate in. Has not been able to provide keys to establish an encrypted channel. Likely due to factory resets, spoofing attacks, or very unlikely address collision in Low Energy devices.</string>
+
+    <string name="notification_category_device_name_changed_name">Bluetooth Device Name Changed Alerts</string>
+    <string name="notification_category_device_name_changed_description">A Bluetooth Device has Changed it\'s name</string>
+
+    <string name="notification_category_device_pairing_request_name">Bluetooth Device Pairing Request Alerts</string>
+    <string name="notification_category_device_pairing_request_description">Pairing requests from a Bluetooth Device to a Host that Android determines needs to pair with.</string>
+
+    <string name="notification_category_device_uuid_name">Bluetooth Device UUID Alerts</string>
+    <string name="notification_category_device_uuid_description">Device Universally Unique Identifier (UUID) that Uniquely Identifies Services offered by the Device.</string>
+
     <!-- notification title/text -->
     <string name="notification_foreground_service_title">Service is running</string>
-    <string name="notification_foreground_service_description">We are passively listening for events. We will notify you of all events you chose to be notified about!</string>
+    <string name="notification_foreground_service_desc">We are passively listening for events.</string>
 
     <string name="notification_state_update_title">Bluetooth State Changed to %1$s</string>
     <string name="notification_state_update_desc">Stub!</string>
@@ -43,4 +82,40 @@
 
     <string name="notification_scan_mode_update_title">Bluetooth Scan Mode Changed!</string>
     <string name="notification_scan_mode_update_desc">Scan Mode Changed to: %1$s</string>
+
+    <string name="notification_acl_connected_title">Bluetooth Device Connected!</string>
+    <string name="notification_acl_connected_desc">Address: %1$s\Name: %2$s\Alias: %3$s\nTransport: %4$s</string>
+
+    <string name="notification_acl_disconnected_title">Bluetooth Device Disconnected!</string>
+    <string name="notification_acl_disconnected_desc">Address: %1$s\nName: %2$s\nAlias: %3$s</string>
+
+    <string name="notification_acl_disconnect_requested_title">Bluetooth Device Requested to Disconnect!</string>
+    <string name="notification_acl_disconnect_requested_desc">Address: %1$s\nName: %2$s\nAlias: %3$s</string>
+
+    <string name="notification_alias_changed_title">Bluetooth Device Alias Changed!</string>
+    <string name="notification_alias_changed_desc">Address: %1$s\nName: %2$s\nNew Alias: %3$s</string>
+
+    <string name="notification_bond_state_changed_title">Bluetooth Device Bond State Changed!</string>
+    <string name="notification_bond_state_changed_desc">Address: %1$s\nName: %2$s\nBond State: %3$s</string>
+
+    <string name="notification_class_changed_title">Bluetooth Device Class Changed!</string>
+    <string name="notification_class_changed_desc">Address: %1$s\nName: %2$s\nClass: %3$s\nMinor Class: %4$s</string>
+
+    <string name="notification_encryption_changed_title">Bluetooth Device Encryption Changed!</string>
+    <string name="notification_encryption_changed_desc">Address: %1$s\nName: %2$s\nStatus: %3$d (%4$s)\nEncrypted: %5$s\nKey Size: %6$d-byte\nAlgorithm: %7$s</string>
+
+    <string name="notification_device_found_title">Bluetooth Device Found!</string>
+    <string name="notification_device_found_desc">Address: %1$s\nName: %2$s\nMajor Class: %3$s\nRSSI: %4$d\nCoordinated Member: %5$s</string>
+
+    <string name="notification_key_missing_title">Bluetooth Device Couldn\'t Provide Keys!</string>
+    <string name="notification_key_missing_desc">Address: %1$s\nName: %2$s\nReason: %3$s</string>
+
+    <string name="notification_name_changed_title">Bluetooth Device Name Changed!</string>
+    <string name="notification_name_changed_desc">Address: %1$s\nNew Name: %2$s</string>
+
+    <string name="notification_pairing_request_title">Bluetooth Device is Pairing with your device!</string>
+    <string name="notification_pairing_request_desc">Address: %1$s\nName: %2$s\nPairing Key: %3$s</string>
+
+    <string name="notification_uuid_title">Bluetooth Device UUID Found!</string>
+    <string name="notification_uuid_desc">Address: %1$s\nName: %2$s\nUUIDs:\n%3$s</string>
 </resources>

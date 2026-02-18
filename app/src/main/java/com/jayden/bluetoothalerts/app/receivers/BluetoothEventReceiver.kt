@@ -1,7 +1,6 @@
 package com.jayden.bluetoothalerts.app.receivers
 
 import android.Manifest
-import android.app.NotificationManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -11,8 +10,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import com.jayden.bluetoothalerts.app.notifications.AppNotificationManager
-import com.jayden.bluetoothalerts.app.service.BluetoothAlertService
-import kotlin.random.Random
 
 class BluetoothEventReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -47,21 +44,25 @@ class BluetoothEventReceiver : BroadcastReceiver() {
                     @Suppress("DEPRECATION")
                     intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
                 }
+                if (device == null) {
+                    Log.i(TAG, "received null device, ignoring")
+                    return
+                }
 
-                val deviceName: String? = if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
-                    device?.name
+                val deviceName: String = if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                    device.name ?: "<null>"
                 } else {
                     "<missing-permission BLUETOOTH_CONNECT>"
                 }
-                val address = if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
-                    device?.address
+                val deviceAddress = if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                    device.address
                 } else {
                     "<missing-permission BLUETOOTH_CONNECT>"
                 }
 
-                val alias = if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                val deviceAlias = if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        device?.alias
+                        device.alias
                     } else {
                         "<upgrade-android-version>"
                     }
@@ -72,11 +73,11 @@ class BluetoothEventReceiver : BroadcastReceiver() {
                 Log.i(TAG, "Notifying user of Bluetooth Connection State Change")
                 AppNotificationManager.showBluetoothConnectionStateNotification(
                     context.applicationContext,
-                    AppNotificationManager.BLUETOOTH_CONNECTION_NOTIFY_ID + deviceName.hashCode(),
+                    AppNotificationManager.BLUETOOTH_CONNECTION_NOTIFY_ID + deviceName.hashCode() + deviceAddress.hashCode(),
                     AppNotificationManager.BluetoothConnectionState.fromId(connectionState)!!,
-                    address,
+                    deviceAddress,
                     deviceName,
-                    alias
+                    deviceAlias
                 )
             }
             BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {

@@ -47,6 +47,12 @@ class MainApplication : Application() {
                 resources.getString(R.string.notification_group_alerts_name)
             ).apply {
                 description = resources.getString(R.string.notification_group_alerts_description)
+            },
+            NotificationChannelGroup(
+                NOTIFICATION_DEVICE_ALERTS_GROUP_ID,
+                resources.getString(R.string.notification_group_device_alerts_name)
+            ).apply {
+                description = resources.getString(R.string.notification_group_device_alerts_description)
             }
         )
 
@@ -106,6 +112,102 @@ class MainApplication : Application() {
             ).apply {
                 group = NOTIFICATION_ALERTS_GROUP_ID
                 description = resources.getString(R.string.notification_category_alert_scan_mode_change_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_ACL_CONNECTED_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_acl_connected_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_acl_connected_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_ACL_DISCONNECTED_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_acl_disconnected_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_acl_disconnected_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_ACL_DISCONNECT_REQUESTED_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_acl_disconnect_request_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_acl_disconnect_request_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_ALIAS_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_alias_changed_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_alias_changed_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_BOND_STATE_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_bond_state_changed_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_bond_state_changed_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_CLASS_CHANGE_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_class_changed_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_class_changed_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_ENCRYPTION_CHANGE_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_encryption_changed_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_class_changed_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_DEVICE_FOUND_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_found_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_found_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_KEY_MISSING_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_key_missing_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_key_missing_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_NAME_CHANGE_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_name_changed_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_name_changed_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_PAIRING_REQUEST_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_pairing_request_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_pairing_request_description)
+            },
+            NotificationChannel(
+                NOTIFICATION_UUID_ALERTS_CHANNEL_ID,
+                resources.getString(R.string.notification_category_device_uuid_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                group = NOTIFICATION_DEVICE_ALERTS_GROUP_ID
+                description = resources.getString(R.string.notification_category_device_uuid_description)
             }
         )
 
@@ -124,5 +226,19 @@ class MainApplication : Application() {
         const val NOTIFICATION_DISCOVERY_STATE_ALERTS_CHANNEL_ID = "bluetooth-discovery-state-alerts-channel"
         const val NOTIFICATION_LOCAL_NAME_CHANGE_ALERTS_CHANNEL_ID = "bluetooth-local-name-change-alerts-channel"
         const val NOTIFICATION_SCAN_MODE_CHANGE_ALERTS_CHANNEL_ID = "bluetooth-scan-mode-change-alerts-channel"
+
+        const val NOTIFICATION_DEVICE_ALERTS_GROUP_ID = "device-alerts-group"
+        const val NOTIFICATION_ACL_CONNECTED_ALERTS_CHANNEL_ID = "bluetooth-acl-connected-alerts-channel"
+        const val NOTIFICATION_ACL_DISCONNECTED_ALERTS_CHANNEL_ID = "bluetooth-acl-disconnected-alerts-channel"
+        const val NOTIFICATION_ACL_DISCONNECT_REQUESTED_CHANNEL_ID = "bluetooth-acl-disonnect-requested-alerts-channel"
+        const val NOTIFICATION_ALIAS_ALERTS_CHANNEL_ID = "bluetooth-alias-alerts-channel"
+        const val NOTIFICATION_BOND_STATE_ALERTS_CHANNEL_ID = "bluetooth-bond-state-alerts-channel"
+        const val NOTIFICATION_CLASS_CHANGE_ALERTS_CHANNEL_ID = "bluetooth-class-change-alerts-channel"
+        const val NOTIFICATION_ENCRYPTION_CHANGE_ALERTS_CHANNEL_ID = "bluetooth-encryption-change-alerts-channel"
+        const val NOTIFICATION_DEVICE_FOUND_ALERTS_CHANNEL_ID = "bluetooth-device-found-alerts-channel"
+        const val NOTIFICATION_KEY_MISSING_ALERTS_CHANNEL_ID = "bluetooth-key-missing-alerts-channel"
+        const val NOTIFICATION_NAME_CHANGE_ALERTS_CHANNEL_ID = "bluetooth-name-change-alerts-channel"
+        const val NOTIFICATION_PAIRING_REQUEST_ALERTS_CHANNEL_ID = "bluetooth-pairing-request-alerts-channel"
+        const val NOTIFICATION_UUID_ALERTS_CHANNEL_ID = "bluetooth-uuid-alerts-channel"
     }
 }
