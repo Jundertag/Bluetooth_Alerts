@@ -127,7 +127,7 @@ object AppNotificationManager {
         val notificationManager = getNotifyManager(ctx)
         val bluetoothStateNotification = Notification.Builder(
             ctx,
-            MainApplication.NOTIFICATION_STATE_ALERTS_CHANNEL_ID
+            AppNotificationRegistry.NOTIFICATION_STATE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
             setContentTitle(
@@ -145,7 +145,7 @@ object AppNotificationManager {
         val notificationManager = getNotifyManager(ctx)
         val bluetoothDiscoveryStateNotification = Notification.Builder(
             ctx,
-            MainApplication.NOTIFICATION_DISCOVERY_STATE_ALERTS_CHANNEL_ID
+            AppNotificationRegistry.NOTIFICATION_DISCOVERY_STATE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
             setContentTitle(
@@ -160,7 +160,7 @@ object AppNotificationManager {
         val notificationManager = getNotifyManager(ctx)
         val bluetoothConnectionStateNotification = Notification.Builder(
             ctx,
-            MainApplication.NOTIFICATION_CONNECTION_STATE_ALERTS_CHANNEL_ID
+            AppNotificationRegistry.NOTIFICATION_CONNECTION_STATE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
             setContentTitle(
@@ -186,7 +186,7 @@ object AppNotificationManager {
         val notificationManager = getNotifyManager(ctx)
         val bluetoothLocalNameChangeNotification = Notification.Builder(
             ctx,
-            MainApplication.NOTIFICATION_LOCAL_NAME_CHANGE_ALERTS_CHANNEL_ID
+            AppNotificationRegistry.NOTIFICATION_LOCAL_NAME_CHANGE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
             setContentTitle(
@@ -203,7 +203,7 @@ object AppNotificationManager {
         val notificationManager = getNotifyManager(ctx)
         val bluetoothScanModeChangeNotification = Notification.Builder(
             ctx,
-            MainApplication.NOTIFICATION_SCAN_MODE_CHANGE_ALERTS_CHANNEL_ID
+            AppNotificationRegistry.NOTIFICATION_SCAN_MODE_CHANGE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
             setContentTitle(
@@ -220,7 +220,7 @@ object AppNotificationManager {
         val notificationManager = getNotifyManager(ctx)
         val bluetoothAclConnectedNotification = Notification.Builder(
             ctx,
-            MainApplication.NOTIFICATION_ACL_CONNECTED_ALERTS_CHANNEL_ID
+            AppNotificationRegistry.NOTIFICATION_ACL_CONNECTED_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
         }
