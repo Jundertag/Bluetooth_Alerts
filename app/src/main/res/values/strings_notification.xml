@@ -68,14 +68,14 @@
     <string name="notification_foreground_service_title">Service is running</string>
     <string name="notification_foreground_service_desc">We are passively listening for events.</string>
 
-    <string name="notification_state_update_title">Bluetooth State Changed to %1$s</string>
-    <string name="notification_state_update_desc">Stub!</string>
+    <string name="notification_state_update_title">Bluetooth State Changed!</string>
+    <string name="notification_state_update_desc">Local Bluetooth Adapter is now: %1$s</string>
 
     <string name="notification_connection_state_update_title">Bluetooth Device %1$s</string>
     <string name="notification_connection_state_update_desc">Address: %1$s\nDevice Name: %2$s\nAlias: %3$s</string>
 
-    <string name="notification_discovery_state_update_title">Bluetooth Discovery State Changed to %1$s</string>
-    <string name="notification_discovery_state_update_desc">Stub!</string>
+    <string name="notification_discovery_state_update_title">Bluetooth Discovery %1$s</string>
+    <string name="notification_discovery_state_update_desc">During Discovery, this device is locating other advertising devices</string>
 
     <string name="notification_local_name_update_title">Bluetooth Local Name Changed!</string>
     <string name="notification_local_name_update_desc">New Name: %1$s</string>
