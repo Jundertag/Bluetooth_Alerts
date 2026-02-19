@@ -21,6 +21,8 @@ class MainApplication : Application() {
         settingsDataStore = SettingsDataStore(applicationContext)
         settingsRepository = SettingsRepository(settingsDataStore)
         mainViewModelFactory = MainViewModelFactory(settingsRepository)
+        AppNotificationInitializer.compareAndRemoveNotificationChannels(applicationContext)
+        AppNotificationInitializer.compareAndRemoveNotificationGroups(applicationContext)
         AppNotificationInitializer.ensureNotificationGroups(applicationContext)
         AppNotificationInitializer.ensureNotificationChannels(applicationContext)
     }

@@ -8,6 +8,29 @@ import android.util.Log
 import com.jayden.bluetoothalerts.R
 
 object AppNotificationInitializer {
+    fun compareAndRemoveNotificationChannels(ctx: Context) {
+        val notificationManager = ctx.getSystemService(NotificationManager::class.java)
+        Log.i(TAG, "comparing current channels with owned channels")
+        notificationManager.notificationChannels.forEach { channel ->
+            if (AppNotificationRegistry.channelIdList.contains(channel.id)) {
+                Log.v(TAG, "came across known owned channel of id: ${channel.id}")
+                return@forEach
+            }
+            Log.d(TAG, "found unknown channel owned by this app, deleting channel: ${channel.id}")
+            notificationManager.deleteNotificationChannel(channel.id)
+        }
+    }
+    fun compareAndRemoveNotificationGroups(ctx: Context) {
+        val notificationManager = ctx.getSystemService(NotificationManager::class.java)
+        notificationManager.notificationChannelGroups.forEach { group ->
+            if (AppNotificationRegistry.groupIdList.contains(group.id)) {
+                Log.v(TAG, "came across known owned group of id: ${group.id}")
+                return@forEach
+            }
+            Log.d(TAG, "found unknown group owned by this app, deleting group: ${group.id}")
+            notificationManager.deleteNotificationChannel(group.id)
+        }
+    }
     fun ensureNotificationGroups(ctx: Context) {
         val notificationManager = ctx.getSystemService(NotificationManager::class.java)
         Log.d(TAG, "Creating notification groups")
