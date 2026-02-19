@@ -12,6 +12,7 @@ import android.os.IBinder
 import android.util.Log
 import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.MainApplication
+import com.jayden.bluetoothalerts.app.notifications.AppNotificationRegistry
 import com.jayden.bluetoothalerts.app.receivers.BluetoothDeviceEventReceiver
 import com.jayden.bluetoothalerts.app.receivers.BluetoothEventReceiver
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +47,7 @@ class BluetoothAlertService : Service() {
                     Log.i(TAG, "foregroundServiceEnabled == true")
                     val notification: Notification = Notification.Builder(
                         this@BluetoothAlertService,
-                        MainApplication.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID
+                        AppNotificationRegistry.NOTIFICATION_BLUETOOTH_ALERT_SERVICE_CHANNEL_ID
                     ).apply {
                         setContentTitle(resources.getString(R.string.notification_foreground_service_title))
                         setContentText(resources.getString(R.string.notification_foreground_service_desc))
