@@ -1,13 +1,9 @@
 package com.jayden.bluetoothalerts.app
 
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationChannelGroup
 import android.app.NotificationManager
 import android.util.Log
-import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.notifications.AppNotificationInitializer
-import com.jayden.bluetoothalerts.app.notifications.AppNotificationRegistry
 import com.jayden.bluetoothalerts.app.viewmodel.MainViewModelFactory
 import com.jayden.bluetoothalerts.data.repo.SettingsRepository
 import com.jayden.bluetoothalerts.data.source.SettingsDataStore
@@ -31,7 +27,5 @@ class MainApplication : Application() {
 
     companion object {
         private const val TAG = "MainApplication"
-
-
     }
 }
