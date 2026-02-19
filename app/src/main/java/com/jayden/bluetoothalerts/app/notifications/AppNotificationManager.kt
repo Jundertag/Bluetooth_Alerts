@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
 import com.jayden.bluetoothalerts.R
-import java.util.UUID
 
 object AppNotificationManager {
     enum class BluetoothState(val id: Int) {
