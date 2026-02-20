@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import com.jayden.bluetoothalerts.app.notifications.AppNotificationManager
 import com.jayden.bluetoothalerts.data.model.bluetooth.BluetoothHCIErrorCode
 
@@ -18,7 +17,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
         Log.v(TAG, "received intent: ${intent.action}")
         when (intent.action) {
             BluetoothDevice.ACTION_ACL_CONNECTED -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -60,7 +59,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -90,7 +89,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -120,7 +119,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_ALIAS_CHANGED -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -150,7 +149,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -180,7 +179,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_CLASS_CHANGED -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -217,7 +216,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
 
             }
             BluetoothDevice.ACTION_ENCRYPTION_CHANGE -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -284,7 +283,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_FOUND -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -336,7 +335,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_KEY_MISSING -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -365,7 +364,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_NAME_CHANGED -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -384,7 +383,7 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_PAIRING_REQUEST -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
@@ -410,14 +409,14 @@ class BluetoothDeviceEventReceiver : BroadcastReceiver() {
                 )
             }
             BluetoothDevice.ACTION_UUID -> {
-                val bluetoothDevice = IntentHelper.getBluetoothDevice(context, intent)
+                val bluetoothDevice = IntentHelper.getBluetoothDevice(intent)
 
                 if (bluetoothDevice == null) {
                     Log.i(TAG, "received null device, ignoring")
                     return
                 }
 
-                val bluetoothDeviceUuids = IntentHelper.getBluetoothDeviceUuids(context, intent)
+                val bluetoothDeviceUuids = IntentHelper.getBluetoothDeviceUuids(intent)
 
                 val deviceAddress = bluetoothDevice.address
                 val deviceName = bluetoothDevice.name

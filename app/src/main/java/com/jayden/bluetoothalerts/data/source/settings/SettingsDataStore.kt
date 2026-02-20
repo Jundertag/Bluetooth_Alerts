@@ -3,7 +3,6 @@ package com.jayden.bluetoothalerts.data.source.settings
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
-import com.jayden.bluetoothalerts.data.source.settings.SettingsSerializer
 import com.jayden.bluetoothalerts.proto.Settings
 import kotlinx.coroutines.flow.Flow
 

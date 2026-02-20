@@ -12,7 +12,7 @@ class SettingsRepository(
 ) {
     fun settingsFlow(scope: CoroutineScope) = dataStore.settingsFlow.distinctUntilChanged().stateIn(
         scope,
-        SharingStarted.Companion.WhileSubscribed(5_000),
+        SharingStarted.WhileSubscribed(5_000),
         Settings.getDefaultInstance()
     )
 

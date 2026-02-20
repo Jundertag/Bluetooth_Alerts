@@ -153,11 +153,6 @@ class BluetoothAlertService : Service() {
         super.onDestroy()
     }
 
-    fun stop() {
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
-    }
-
     companion object {
         private const val TAG = "BluetoothAlertService"
         const val FOREGROUND_ID = 131072

@@ -1,13 +1,12 @@
 package com.jayden.bluetoothalerts.app.receivers
 
 import android.bluetooth.BluetoothDevice
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.ParcelUuid
 
 object IntentHelper {
-    fun getBluetoothDevice(ctx: Context, intent: Intent): BluetoothDevice? {
+    fun getBluetoothDevice(intent: Intent): BluetoothDevice? {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return intent.getParcelableExtra(
                 BluetoothDevice.EXTRA_DEVICE,
@@ -19,7 +18,7 @@ object IntentHelper {
         }
     }
 
-    fun getBluetoothDeviceUuids(ctx: Context, intent: Intent): String? {
+    fun getBluetoothDeviceUuids(intent: Intent): String? {
         val uuids = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID, ParcelUuid::class.java)
         } else {
