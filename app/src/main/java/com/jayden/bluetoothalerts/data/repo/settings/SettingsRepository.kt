@@ -1,21 +1,18 @@
-package com.jayden.bluetoothalerts.data.repo
+package com.jayden.bluetoothalerts.data.repo.settings
 
-import com.jayden.bluetoothalerts.data.source.SettingsDataStore
+import com.jayden.bluetoothalerts.data.source.settings.SettingsDataStore
 import com.jayden.bluetoothalerts.proto.Settings
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 
 class SettingsRepository(
     private val dataStore: SettingsDataStore
 ) {
-    fun settingsFlow(scope: CoroutineScope) = dataStore.settingsFlow.stateIn(
+    fun settingsFlow(scope: CoroutineScope) = dataStore.settingsFlow.distinctUntilChanged().stateIn(
         scope,
-        SharingStarted.WhileSubscribed(5_000),
+        SharingStarted.Companion.WhileSubscribed(5_000),
         Settings.getDefaultInstance()
     )
 

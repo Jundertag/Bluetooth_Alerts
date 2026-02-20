@@ -10,13 +10,19 @@ plugins {
 android {
     namespace = "com.jayden.bluetoothalerts"
     compileSdk {
-        version = release(36)
+        version = release(36) {
+            minorApiLevel = 1
+        }
     }
 
     defaultConfig {
         applicationId = "com.jayden.bluetoothalerts"
-        minSdk = 28
-        targetSdk = 36
+        minSdk {
+            version = release(28)
+        }
+        targetSdk {
+            version = release(36)
+        }
         versionCode = 1
         versionName = "1.0"
 

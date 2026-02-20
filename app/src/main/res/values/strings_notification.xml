@@ -84,7 +84,7 @@
     <string name="notification_scan_mode_update_desc">Scan Mode Changed to: %1$s</string>
 
     <string name="notification_acl_connected_title">Bluetooth Device Connected!</string>
-    <string name="notification_acl_connected_desc">Address: %1$s\Name: %2$s\Alias: %3$s\nTransport: %4$s</string>
+    <string name="notification_acl_connected_desc">Address: %1$s\nName: %2$s\nAlias: %3$s\nTransport: %4$s</string>
 
     <string name="notification_acl_disconnected_title">Bluetooth Device Disconnected!</string>
     <string name="notification_acl_disconnected_desc">Address: %1$s\nName: %2$s\nAlias: %3$s</string>
@@ -102,7 +102,7 @@
     <string name="notification_class_changed_desc">Address: %1$s\nName: %2$s\nClass: %3$s\nMinor Class: %4$s</string>
 
     <string name="notification_encryption_changed_title">Bluetooth Device Encryption Changed!</string>
-    <string name="notification_encryption_changed_desc">Address: %1$s\nName: %2$s\nStatus: %3$d (%4$s)\nEncrypted: %5$s\nKey Size: %6$d-byte\nAlgorithm: %7$s</string>
+    <string name="notification_encryption_changed_desc">Address: %1$s\nName: %2$s\nStatus: %3$d (%4$s)\nEncrypted: %5$s\nKey Size: %6$d-bit\nAlgorithm: %7$s</string>
 
     <string name="notification_device_found_title">Bluetooth Device Found!</string>
     <string name="notification_device_found_desc">Address: %1$s\nName: %2$s\nMajor Class: %3$s\nRSSI: %4$s\nCoordinated Member: %5$s</string>

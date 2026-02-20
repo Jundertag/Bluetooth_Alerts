@@ -238,6 +238,25 @@ object AppNotificationManager {
         }
     }
 
+    enum class BluetoothBondLossReason(val id: Int) {
+        BREDR_AUTH_FAILURE(1),
+        BREDR_INCOMING_PAIRING(2),
+        LE_ENCRYPT_FAILURE(3),
+        LE_INCOMING_PAIRING(4),
+        UNKNOWN(0);
+
+        override fun toString(): String {
+            val format = name.lowercase().replace('_', ' ')
+            val upperChar = format[0].uppercase()
+            return format.replaceFirst(upperChar.lowercase(), upperChar)
+        }
+
+        companion object {
+            private val lookup = entries.associateBy { it.id }
+            fun fromId(id: Int): BluetoothBondLossReason? = lookup[id]
+        }
+    }
+
 
     const val BLUETOOTH_STATE_NOTIFY_ID = 1
     const val BLUETOOTH_DISCOVERY_STATE_ID = 2
@@ -353,7 +372,7 @@ object AppNotificationManager {
         }.build()
         notificationManager.notify(id, bluetoothScanModeChangeNotification)
     }
-    fun showBluetoothAclConnectedNotification(ctx: Context, id: Int, deviceAddress: String, deviceName: String?, deviceAlias: String?, deviceTransport: BluetoothTransport) {
+    fun showBluetoothAclConnectedNotification(ctx: Context, id: Int, deviceAddress: String, deviceName: String?, deviceAlias: String?, deviceTransport: BluetoothTransport?) {
         val notificationManager = getNotifyManager(ctx)
         val bluetoothAclConnectedNotification = Notification.Builder(
             ctx,
@@ -363,13 +382,14 @@ object AppNotificationManager {
             setContentTitle(
                 ctx.resources.getString(R.string.notification_acl_connected_title)
             )
+            setStyle(Notification.BigTextStyle())
             setContentText(
                 ctx.resources.getString(
                     R.string.notification_acl_connected_desc,
                     deviceAddress,
                     deviceName ?: "<null>",
                     deviceAlias ?: "<null>",
-                    deviceTransport.toString()
+                    deviceTransport?.toString() ?: "<upgrade-android-version>"
                 )
             )
             setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -383,6 +403,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_ACL_DISCONNECTED_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_acl_disconnected_title)
             )
@@ -405,6 +426,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_ACL_DISCONNECT_REQUESTED_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_acl_disconnect_requested_title)
             )
@@ -427,6 +449,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_ALIAS_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_alias_changed_title)
             )
@@ -449,6 +472,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_BOND_STATE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_bond_state_changed_title)
             )
@@ -471,6 +495,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_CLASS_CHANGE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_class_changed_title)
             )
@@ -487,6 +512,10 @@ object AppNotificationManager {
         }.build()
         notificationManager.notify(id, bluetoothClassChangedNotification)
     }
+
+    /**
+     * [keySize] parameter is assumed to be bits, android reports key size as bytes. Multiply by 8 to get bits from bytes
+     */
     fun showBluetoothEncryptionChangedNotification(ctx: Context, id: Int, deviceAddress: String, deviceName: String?, encryptionStatusCode: Int, encryptionStatusCodeMeaning: String?, encryptionEnabled: Boolean, keySize: Int, encryptionAlgorithm: BluetoothDeviceEncryptionAlgorithm) {
         val notificationManager = getNotifyManager(ctx)
         val bluetoothEncryptionChangedNotification = Notification.Builder(
@@ -494,6 +523,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_ENCRYPTION_CHANGE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_encryption_changed_title)
             )
@@ -520,6 +550,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_DEVICE_FOUND_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_device_found_title)
             )
@@ -530,20 +561,21 @@ object AppNotificationManager {
                     deviceName ?: "<null>",
                     deviceMajorClass.toString(),
                     rssi ?: "not available",
-                    deviceCoordinatedMember?.toString() ?: "not available"
+                    deviceCoordinatedMember?.toString() ?: "<upgrade-android-version>"
                 )
             )
             setSmallIcon(R.drawable.ic_launcher_foreground)
         }.build()
         notificationManager.notify(id, bluetoothDeviceFoundNotification)
     }
-    fun showBluetoothKeyMissingNotification(ctx: Context, id: Int, deviceAddress: String, deviceName: String?, keyMissingReason: String?) {
+    fun showBluetoothKeyMissingNotification(ctx: Context, id: Int, deviceAddress: String, deviceName: String?, keyMissingReason: BluetoothBondLossReason?) {
         val notificationManager = getNotifyManager(ctx)
         val bluetoothKeyMissingNotification = Notification.Builder(
             ctx,
             AppNotificationRegistry.NOTIFICATION_KEY_MISSING_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_key_missing_title)
             )
@@ -552,7 +584,7 @@ object AppNotificationManager {
                     R.string.notification_key_missing_desc,
                     deviceAddress,
                     deviceName ?: "<null>",
-                    keyMissingReason ?: "unknown reason"
+                    keyMissingReason ?: "<upgrade-android-version>"
                 )
             )
             setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -566,6 +598,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_NAME_CHANGE_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_name_changed_title)
             )
@@ -587,6 +620,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_PAIRING_REQUEST_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_pairing_request_title)
             )
@@ -609,6 +643,7 @@ object AppNotificationManager {
             AppNotificationRegistry.NOTIFICATION_UUID_ALERTS_CHANNEL_ID
         ).apply {
             setCategory(Notification.CATEGORY_STATUS)
+            setStyle(Notification.BigTextStyle())
             setContentTitle(
                 ctx.resources.getString(R.string.notification_uuid_title)
             )
@@ -617,7 +652,7 @@ object AppNotificationManager {
                     R.string.notification_uuid_desc,
                     deviceAddress,
                     deviceName ?: "<null>",
-                    deviceUuids
+                    deviceUuids ?: "<os-failure>"
                 )
             )
             setSmallIcon(R.drawable.ic_launcher_foreground)

@@ -180,7 +180,7 @@ object AppNotificationInitializer {
             ).apply {
                 group = AppNotificationRegistry.NOTIFICATION_DEVICE_ALERTS_GROUP_ID
                 description =
-                    ctx.resources.getString(R.string.notification_category_device_class_changed_description)
+                    ctx.resources.getString(R.string.notification_category_device_encryption_changed_description)
             },
             NotificationChannel(
                 AppNotificationRegistry.NOTIFICATION_DEVICE_FOUND_ALERTS_CHANNEL_ID,

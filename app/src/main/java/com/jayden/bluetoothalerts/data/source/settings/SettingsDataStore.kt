@@ -1,11 +1,10 @@
-package com.jayden.bluetoothalerts.data.source
+package com.jayden.bluetoothalerts.data.source.settings
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
-import com.jayden.bluetoothalerts.proto.MonitorMode
+import com.jayden.bluetoothalerts.data.source.settings.SettingsSerializer
 import com.jayden.bluetoothalerts.proto.Settings
-import com.jayden.bluetoothalerts.proto.copy
 import kotlinx.coroutines.flow.Flow
 
 val Context.settingsStore: DataStore<Settings> by dataStore(

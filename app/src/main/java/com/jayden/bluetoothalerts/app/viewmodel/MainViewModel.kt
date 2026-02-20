@@ -3,7 +3,7 @@ package com.jayden.bluetoothalerts.app.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jayden.bluetoothalerts.data.repo.SettingsRepository
+import com.jayden.bluetoothalerts.data.repo.settings.SettingsRepository
 import com.jayden.bluetoothalerts.proto.MonitorMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

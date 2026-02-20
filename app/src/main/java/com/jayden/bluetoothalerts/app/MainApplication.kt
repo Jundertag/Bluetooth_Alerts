@@ -5,8 +5,8 @@ import android.app.NotificationManager
 import android.util.Log
 import com.jayden.bluetoothalerts.app.notifications.AppNotificationInitializer
 import com.jayden.bluetoothalerts.app.viewmodel.MainViewModelFactory
-import com.jayden.bluetoothalerts.data.repo.SettingsRepository
-import com.jayden.bluetoothalerts.data.source.SettingsDataStore
+import com.jayden.bluetoothalerts.data.repo.settings.SettingsRepository
+import com.jayden.bluetoothalerts.data.source.settings.SettingsDataStore
 
 class MainApplication : Application() {
     private lateinit var notificationManager: NotificationManager
