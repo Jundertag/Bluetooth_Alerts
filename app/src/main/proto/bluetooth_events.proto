@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+option java_package = "com.jayden.bluetoothalerts.proto";
+option java_multiple_files = true;
+
+message BluetoothEvent {
+  int64 timestamp = 1;
+
+  oneof event {
+    NameChangedEvent name_changed_event = 2;
+    ConnectionStateChangedEvent connection_state_changed_event = 3;
+    DiscoveryStateChangedEvent discovery_state_changed_event = 4;
+    ScanModeChangedEvent scan_mode_changed_event = 5;
+    StateChangedEvent state_changed_event = 6;
+    DeviceConnectedEvent device_connected_event = 7;
+    DeviceDisconnectedEvent device_disconnected_event = 8;
+    DeviceDisconnectRequestedEvent device_disconnect_requested_event = 9;
+    AliasChangedEvent alias_changed_event = 10;
+    BondStateChangedEvent bond_state_changed_event = 11;
+    ClassChangedEvent class_changed_event = 12;
+    EncryptionChangedEvent encryption_changed_event = 13;
+    DeviceFoundEvent device_found_event = 14;
+    KeyMissingEvent key_missing_event = 15;
+    PairingRequestEvent pairing_request_event = 16;
+    UuidFoundEvent uuid_found_event = 17;
+  }
+}
+
+message NameChangedEvent {
+  string new_name = 1;
+  string prev_name = 2;
+  oneof origin {
+    BluetoothDevice device = 3;
+    BluetoothAdapter adapter = 4;
+  }
+}
+
+message ConnectionStateChangedEvent {
+  int32 connection_state = 1;
+  int32 prev_connection_state = 2;
+  BluetoothDevice device = 3;
+}
+
+message DiscoveryStateChangedEvent {
+  int32 discovery_state = 1;
+}
+
+message ScanModeChangedEvent {
+  int32 scan_mode = 1;
+  int32 prev_scan_mode = 2;
+}
+
+message StateChangedEvent {
+  int32 state = 1;
+  int32 prev_state = 2;
+}
+
+message DeviceConnectedEvent {
+  BluetoothDevice device = 1;
+  int32 transport = 2;
+}
+
+message DeviceDisconnectedEvent {
+  BluetoothDevice device = 1;
+}
+
+message DeviceDisconnectRequestedEvent {
+  BluetoothDevice device = 1;
+}
+
+message AliasChangedEvent {
+  BluetoothDevice device = 1;
+}
+
+message BondStateChangedEvent {
+  int32 bond_state = 1;
+  int32 prev_bond_state = 2;
+  BluetoothDevice device = 3;
+}
+
+message ClassChangedEvent {
+  int32 major_class = 1;
+  int32 minor_class = 2;
+  BluetoothDevice device = 3;
+}
+
+message EncryptionChangedEvent {
+  int32 encryption_status = 1;
+  bool encryption_enabled = 2;
+  int32 key_size = 3;
+  int32 encryption_algorithm = 4;
+  BluetoothDevice device = 5;
+}
+
+message DeviceFoundEvent {
+  optional int32 rssi = 1;
+  optional bool is_coordinated_member = 2;
+  BluetoothDevice device = 3;
+}
+
+message KeyMissingEvent {
+  int32 bond_loss_reason = 1;
+  BluetoothDevice device = 2;
+}
+
+message PairingRequestEvent {
+  int32 pairing_key = 1;
+  BluetoothDevice device = 2;
+}
+
+message UuidFoundEvent {
+  repeated string uuids = 1;
+}
+
+message BluetoothDevice {
+  string addresss = 1;
+  string name = 2;
+  string alias = 3;
+}
+
+message BluetoothAdapter {}

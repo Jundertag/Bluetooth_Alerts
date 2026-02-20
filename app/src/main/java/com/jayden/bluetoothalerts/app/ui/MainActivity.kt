@@ -1,12 +1,11 @@
 package com.jayden.bluetoothalerts.app.ui
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,16 +15,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.Composable
-import androidx.compose.material3.Text
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -45,10 +46,32 @@ class MainActivity : AppCompatActivity() {
     val viewModel: MainViewModel by viewModels(
         factoryProducer = { (application as MainApplication).mainViewModelFactory }
     )
+
+    private val startDestination = mutableStateOf<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleIntent(intent)
         setContent {
-            ConstraintLayoutMainActivityContent()
+            var currentScreen by rememberSaveable { mutableStateOf(startDestination.value ?: Screen.SETTINGS) }
+            Log.v(TAG, "currentScreen = $currentScreen")
+            Log.v(TAG, "startDestination = $startDestination")
+
+            when (currentScreen) {
+                Screen.SETTINGS -> {
+                    Log.d(TAG, "SettingsScreen init")
+                    SettingsScreen(onGoToScreen = { route ->
+                        if (route != currentScreen) currentScreen = route
+                    })
+                }
+
+                Screen.EVENTS -> {
+                    Log.d(TAG, "EventsScreen init")
+                    EventsScreen(onGoToScreen = { route ->
+                        if (route != currentScreen) currentScreen = route
+                    })
+                }
+            }
         }
 
         lifecycleScope.launch {
@@ -71,23 +94,40 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        Log.d(TAG, "handling intent: ${intent?.action}")
+        if (intent == null) return
+        if (intent.getStringExtra(SettingsActivity.EXTRA_INIT) == Screen.SETTINGS) {
+            Log.i(TAG, "intent extras want default screen destination to be Screen.SETTINGS")
+            startDestination.value = Screen.SETTINGS
+        }
+    }
+
     @Composable
-    fun ConstraintLayoutMainActivityContent() {
+    fun ActivityRoot() {
+
+    }
+
+    @Composable
+    fun EventsScreen(onGoToScreen: (String) -> Unit) {
+        ConstraintLayout(Modifier.fillMaxSize()) {
+
+        }
+    }
+
+    @Composable
+    fun SettingsScreen(onGoToScreen: ((String) -> Unit)) {
         ConstraintLayout(Modifier.fillMaxSize()) {
             val enableForegroundServiceRef = createRef()
             val monitorModeRef = createRef()
 
-            val optionState: Boolean by viewModel.settingsForegroundServiceEnabled.collectAsStateWithLifecycle(false)
-
-            SettingsItem(title = "Enable Foreground Service",
-                description = "By checking this option, you are allowing us to use a foreground service to keep us in the foreground. We will only use this to monitor Bluetooth state.",
-                modifier = Modifier.constrainAs(enableForegroundServiceRef) {
-                    top.linkTo(monitorModeRef.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
-                switchChecked = optionState,
-                onClick = viewModel::updateForegroundServiceEnabled
+            val optionState: Boolean by viewModel.settingsForegroundServiceEnabled.collectAsStateWithLifecycle(
+                false
             )
 
             val options = listOf(
@@ -109,9 +149,21 @@ class MainActivity : AppCompatActivity() {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
-                }.padding(top = 64.dp),
+                }.padding(top = 72.dp),
                 selected = selected,
                 onSelectedChange = viewModel::updateMonitorMode
+            )
+
+            SettingsItem(
+                title = "Enable Foreground Service",
+                description = "By checking this option, you are allowing us to use a foreground service to keep us in the foreground. We will only use this to monitor Bluetooth state.",
+                modifier = Modifier.constrainAs(enableForegroundServiceRef) {
+                    top.linkTo(monitorModeRef.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+                switchChecked = optionState,
+                onClick = viewModel::updateForegroundServiceEnabled
             )
         }
     }
@@ -210,12 +262,6 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
-    }
-
-    @Preview(showSystemUi = true, device = "id:pixel_9", uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Composable
-    fun PreviewCompose() {
-        ConstraintLayoutMainActivityContent()
     }
 
     companion object {

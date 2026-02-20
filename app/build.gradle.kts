@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.protobuf)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.tools.ksp)
 }
 
 android {
@@ -56,7 +57,7 @@ kotlin {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:4.33.4"
+        artifact = "com.google.protobuf:protoc:4.33.5"
     }
     generateProtoTasks {
         all().forEach { task ->
@@ -84,6 +85,10 @@ dependencies {
     implementation(libs.androidx.datastore)
     implementation(libs.google.protobuf.kotlinlite)
     implementation(libs.google.protobuf.javalite)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
+    ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
