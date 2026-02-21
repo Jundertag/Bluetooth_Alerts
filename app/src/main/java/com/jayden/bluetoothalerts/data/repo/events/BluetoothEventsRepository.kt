@@ -1,17 +1,23 @@
 package com.jayden.bluetoothalerts.data.repo.events
 
-import com.jayden.bluetoothalerts.data.source.events.BluetoothEventDataStore
-import com.jayden.bluetoothalerts.proto.BluetoothEvent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import android.content.Context
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import com.jayden.bluetoothalerts.data.source.events.BluetoothEventDatabase
 
 class BluetoothEventsRepository(
-    private val dataStore: BluetoothEventDataStore
+    private val applicationContext: Context
 ) {
-    fun bluetoothEventsFlow(scope: CoroutineScope) = dataStore.bluetoothEventFlow.stateIn(
-        scope,
-        SharingStarted.WhileSubscribed(5_000),
-        BluetoothEvent.getDefaultInstance()
-    )
+    private val database by lazy { BluetoothEventDatabase.get(applicationContext) }
+    private val dataAccessObject by lazy { database.getBluetoothEventDao() }
+
+    fun pagingFlow() = Pager(
+        config = PagingConfig(
+            pageSize = 50,
+            prefetchDistance = 20,
+            enablePlaceholders = false
+        )
+    ) {
+        dataAccessObject.pagingSource()
+    }.flow
 }

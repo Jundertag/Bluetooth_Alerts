@@ -17,4 +17,5 @@ object EventType {
     const val KEY_MISSING = 14
     const val PAIRING_REQUEST = 15
     const val UUID_FOUND = 16
+    const val UNKNOWN = -1
 }

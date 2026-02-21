@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
@@ -35,11 +37,38 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.jayden.bluetoothalerts.app.MainApplication
 import com.jayden.bluetoothalerts.app.service.BluetoothAlertService
 import com.jayden.bluetoothalerts.app.viewmodel.MainViewModel
+import com.jayden.bluetoothalerts.data.source.events.BluetoothEventSerializer
+import com.jayden.bluetoothalerts.data.source.events.BluetoothEventSerializer.toEventType
+import com.jayden.bluetoothalerts.data.source.events.BluetoothEventSerializer.toProto
+import com.jayden.bluetoothalerts.data.source.events.EventType
+import com.jayden.bluetoothalerts.proto.AliasChangedEvent
+import com.jayden.bluetoothalerts.proto.BluetoothEvent
+import com.jayden.bluetoothalerts.proto.BondStateChangedEvent
+import com.jayden.bluetoothalerts.proto.ClassChangedEvent
+import com.jayden.bluetoothalerts.proto.ConnectionStateChangedEvent
+import com.jayden.bluetoothalerts.proto.DeviceConnectedEvent
+import com.jayden.bluetoothalerts.proto.DeviceDisconnectRequestedEvent
+import com.jayden.bluetoothalerts.proto.DeviceDisconnectedEvent
+import com.jayden.bluetoothalerts.proto.DeviceFoundEvent
+import com.jayden.bluetoothalerts.proto.DiscoveryStateChangedEvent
+import com.jayden.bluetoothalerts.proto.EncryptionChangedEvent
+import com.jayden.bluetoothalerts.proto.KeyMissingEvent
 import com.jayden.bluetoothalerts.proto.MonitorMode
+import com.jayden.bluetoothalerts.proto.NameChangedEvent
+import com.jayden.bluetoothalerts.proto.PairingRequestEvent
+import com.jayden.bluetoothalerts.proto.ScanModeChangedEvent
+import com.jayden.bluetoothalerts.proto.StateChangedEvent
+import com.jayden.bluetoothalerts.proto.UuidFoundEvent
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 
 class MainActivity : AppCompatActivity() {
@@ -108,16 +137,235 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @Composable
-    fun ActivityRoot() {
-
+    private fun formatTimestamp(timestampMs: Long): String {
+        val currentTime = Instant.ofEpochMilli(timestampMs).atZone(ZoneId.systemDefault())
+        val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+        return currentTime.format(timeFormatter)
     }
 
     @Composable
     fun EventsScreen(onGoToScreen: (String) -> Unit) {
         ConstraintLayout(Modifier.fillMaxSize()) {
+            val lazyBluetoothEventItems = viewModel.bluetoothEventsPager.collectAsLazyPagingItems()
 
+            LazyColumn(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+            ) {
+                items(lazyBluetoothEventItems.itemCount) { index ->
+                    val bluetoothEventItem = lazyBluetoothEventItems[index]
+                    bluetoothEventItem?.let { item ->
+                        val formattedTimestamp = formatTimestamp(item.timestampMs)
+                        val protoItem = item.toProto()
+
+                        EventItem(
+                            formatTimestamp = formattedTimestamp,
+                            eventType = protoItem.toEventType(),
+                            item = BluetoothEvent.getDefaultInstance(),
+                        )
+                    }
+                }
+            }
         }
+    }
+
+    @Composable
+    fun EventItem(
+        modifier: Modifier = Modifier,
+        formatTimestamp: String,
+        eventType: Int,
+        item: BluetoothEvent
+    ) {
+        Card(modifier = modifier) {
+            Text(text = formatTimestamp, modifier = modifier)
+            when (eventType) {
+                EventType.NAME_CHANGED -> {
+                    NameChangedItem(modifier, item.nameChangedEvent)
+                }
+
+                EventType.CONNECTION_STATE_CHANGED -> {
+                    ConnectionStateChangedItem(
+                        modifier,
+                        item.connectionStateChangedEvent
+                    )
+                }
+
+                EventType.DISCOVERY_STATE_CHANGED -> {
+                    DiscoveryStateChangedItem(
+                        modifier,
+                        item.discoveryStateChangedEvent
+                    )
+                }
+
+                EventType.SCAN_MODE_CHANGED -> {
+                    ScanModeChangedItem(modifier, item.scanModeChangedEvent)
+                }
+
+                EventType.STATE_CHANGED -> {
+                    StateChangedItem(modifier, item.stateChangedEvent)
+                }
+
+                EventType.DEVICE_CONNECTED -> {
+                    DeviceConnectedItem(modifier, item.deviceConnectedEvent)
+                }
+
+                EventType.DEVICE_DISCONNECTED -> {
+                    DeviceDisconnectedItem(modifier, item.deviceDisconnectedEvent)
+                }
+
+                EventType.DEVICE_DISCONNECT_REQUESTED -> {
+                    DeviceDisconnectRequestedItem(
+                        modifier,
+                        item.deviceDisconnectRequestedEvent
+                    )
+                }
+
+                EventType.ALIAS_CHANGED -> {
+                    AliasChangedItem(modifier, item.aliasChangedEvent)
+                }
+
+                EventType.BOND_STATE_CHANGED -> {
+                    BondStateChangedItem(modifier, item.bondStateChangedEvent)
+                }
+
+                EventType.CLASS_CHANGED -> {
+                    ClassChangedItem(modifier, item.classChangedEvent)
+                }
+
+                EventType.ENCRYPTION_CHANGED -> {
+                    EncryptionChangedItem(modifier, item.encryptionChangedEvent)
+                }
+
+                EventType.DEVICE_FOUND -> {
+                    DeviceFoundItem(modifier, item.deviceFoundEvent)
+                }
+
+                EventType.KEY_MISSING -> {
+                    KeyMissingItem(modifier, item.keyMissingEvent)
+                }
+
+                EventType.PAIRING_REQUEST -> {
+                    PairingRequestItem(modifier, item.pairingRequestEvent)
+                }
+
+                EventType.UUID_FOUND -> {
+                    UuidFoundItem(modifier, item.uuidFoundEvent)
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun NameChangedItem(
+        modifier: Modifier = Modifier,
+        item: NameChangedEvent
+    ) {
+
+    }
+    @Composable
+    fun ConnectionStateChangedItem(
+        modifier: Modifier = Modifier,
+        item: ConnectionStateChangedEvent
+    ) {
+
+    }
+    @Composable
+    fun DiscoveryStateChangedItem(
+        modifier: Modifier = Modifier,
+        item: DiscoveryStateChangedEvent
+    ) {
+
+    }
+    @Composable
+    fun ScanModeChangedItem(
+        modifier: Modifier = Modifier,
+        item: ScanModeChangedEvent
+    ) {
+
+    }
+    @Composable
+    fun StateChangedItem(
+        modifier: Modifier = Modifier,
+        item: StateChangedEvent
+    ) {
+
+    }
+    @Composable
+    fun DeviceConnectedItem(
+        modifier: Modifier = Modifier,
+        item: DeviceConnectedEvent
+    ) {
+
+    }
+    @Composable
+    fun DeviceDisconnectedItem(
+        modifier: Modifier = Modifier,
+        item: DeviceDisconnectedEvent
+    ) {
+
+    }
+    @Composable
+    fun DeviceDisconnectRequestedItem(
+        modifier: Modifier = Modifier,
+        item: DeviceDisconnectRequestedEvent
+    ) {
+
+    }
+    @Composable
+    fun AliasChangedItem(
+        modifier: Modifier = Modifier,
+        item: AliasChangedEvent
+    ) {
+
+    }
+    @Composable
+    fun BondStateChangedItem(
+        modifier: Modifier = Modifier,
+        item: BondStateChangedEvent
+    ) {
+
+    }
+    @Composable
+    fun ClassChangedItem(
+        modifier: Modifier = Modifier,
+        item: ClassChangedEvent
+    ) {
+
+    }
+    @Composable
+    fun EncryptionChangedItem(
+        modifier: Modifier = Modifier,
+        item: EncryptionChangedEvent
+    ) {
+
+    }
+    @Composable
+    fun DeviceFoundItem(
+        modifier: Modifier = Modifier,
+        item: DeviceFoundEvent
+    ) {
+
+    }
+    @Composable
+    fun KeyMissingItem(
+        modifier: Modifier = Modifier,
+        item: KeyMissingEvent
+    ) {
+
+    }
+    @Composable
+    fun PairingRequestItem(
+        modifier: Modifier = Modifier,
+        item: PairingRequestEvent
+    ) {
+
+    }
+    @Composable
+    fun UuidFoundItem(
+        modifier: Modifier = Modifier,
+        item: UuidFoundEvent
+    ) {
+
     }
 
     @Composable
@@ -145,11 +393,13 @@ class MainActivity : AppCompatActivity() {
                     |Always - Always keep the app awake
                 """.trimMargin(),
                 options = options,
-                modifier = Modifier.constrainAs(monitorModeRef) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                }.padding(top = 72.dp),
+                modifier = Modifier
+                    .constrainAs(monitorModeRef) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                    }
+                    .padding(top = 72.dp),
                 selected = selected,
                 onSelectedChange = viewModel::updateMonitorMode
             )
@@ -248,7 +498,9 @@ class MainActivity : AppCompatActivity() {
                 HorizontalDivider(Modifier.padding(8.dp))
 
                 options.forEach { (id, label) ->
-                    Column(modifier = Modifier.clickable { onSelectedChange(id) }.fillMaxWidth(0.9f), verticalArrangement = Arrangement.Center) {
+                    Column(modifier = Modifier
+                        .clickable { onSelectedChange(id) }
+                        .fillMaxWidth(0.9f), verticalArrangement = Arrangement.Center) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                             RadioButton(
                                 selected = (selected == id),

@@ -3,13 +3,16 @@ package com.jayden.bluetoothalerts.app.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
+import com.jayden.bluetoothalerts.data.repo.events.BluetoothEventsRepository
 import com.jayden.bluetoothalerts.data.repo.settings.SettingsRepository
 import com.jayden.bluetoothalerts.proto.MonitorMode
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val settingsRepo: SettingsRepository
+    private val settingsRepo: SettingsRepository,
+    private val bluetoothEventsRepository: BluetoothEventsRepository
 ) : ViewModel() {
     data class SettingsUiState(
         val monitorMode: MonitorMode,
@@ -22,6 +25,8 @@ class MainViewModel(
 
     val settingsMonitorMode = settingsState.map { it.monitorMode }
     val settingsForegroundServiceEnabled = settingsState.map { it.foregroundServiceEnabled }
+
+    val bluetoothEventsPager = bluetoothEventsRepository.pagingFlow().cachedIn(viewModelScope)
 
     fun updateMonitorMode(to: MonitorMode) {
         Log.d(TAG, "updateMonitorMode(MonitorMode.${to.name})")

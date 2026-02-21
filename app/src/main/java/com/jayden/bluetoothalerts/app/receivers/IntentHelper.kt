@@ -34,6 +34,7 @@ object IntentHelper {
         uuids.forEach { uuid ->
             builder.appendLine(uuid.toString())
         }
+        builder.deleteAt(builder.length - 1)
         return builder.toString()
     }
 }
