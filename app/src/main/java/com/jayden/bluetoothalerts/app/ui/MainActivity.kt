@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -39,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.jayden.bluetoothalerts.R
 import com.jayden.bluetoothalerts.app.MainApplication
 import com.jayden.bluetoothalerts.app.service.BluetoothAlertService
 import com.jayden.bluetoothalerts.app.viewmodel.MainViewModel
@@ -47,6 +49,8 @@ import com.jayden.bluetoothalerts.data.source.events.BluetoothEventSerializer.to
 import com.jayden.bluetoothalerts.data.source.events.BluetoothEventSerializer.toProto
 import com.jayden.bluetoothalerts.data.source.events.EventType
 import com.jayden.bluetoothalerts.proto.AliasChangedEvent
+import com.jayden.bluetoothalerts.proto.BluetoothAdapter
+import com.jayden.bluetoothalerts.proto.BluetoothDevice
 import com.jayden.bluetoothalerts.proto.BluetoothEvent
 import com.jayden.bluetoothalerts.proto.BondStateChangedEvent
 import com.jayden.bluetoothalerts.proto.ClassChangedEvent
@@ -176,8 +180,8 @@ class MainActivity : AppCompatActivity() {
         eventType: Int,
         item: BluetoothEvent
     ) {
-        Card(modifier = modifier) {
-            Text(text = formatTimestamp, modifier = modifier)
+        Card(modifier = modifier.padding(8.dp)) {
+            Text(text = formatTimestamp, modifier = Modifier.padding(8.dp))
             when (eventType) {
                 EventType.NAME_CHANGED -> {
                     NameChangedItem(modifier, item.nameChangedEvent)
@@ -255,12 +259,94 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Preview(showSystemUi = true, device = "id:pixel_9")
+    @Composable
+    fun NameChangedPreview() {
+        Column {
+            EventItem(
+                formatTimestamp = "12:26 PM",
+                eventType = EventType.NAME_CHANGED,
+                item = BluetoothEvent.newBuilder().apply {
+                    nameChangedEvent = NameChangedEvent.newBuilder().apply {
+                        newName = "test new name"
+                        prevName = "test prev name"
+                        adapter = BluetoothAdapter.getDefaultInstance()
+                    }.build()
+                }.build(),
+                modifier = Modifier
+                    .padding(top = 64.dp)
+                    .fillMaxWidth()
+            )
+
+            EventItem(
+                formatTimestamp = "12:26 PM",
+                eventType = EventType.NAME_CHANGED,
+                item = BluetoothEvent.newBuilder().apply {
+                    nameChangedEvent = NameChangedEvent.newBuilder().apply {
+                        newName = "test new name"
+                        prevName = "test prev name"
+                        device = BluetoothDevice.newBuilder().apply {
+                            address = "00:11:22:AA:BB:CC"
+                            name = "test device name"
+                            alias = "test device alias"
+                        }.build()
+                    }.build()
+                }.build(),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+    }
+
     @Composable
     fun NameChangedItem(
         modifier: Modifier = Modifier,
         item: NameChangedEvent
     ) {
-
+        when (item.originCase) {
+            NameChangedEvent.OriginCase.DEVICE -> {
+                Text(
+                    "Bluetooth Device Name Changed!",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+                Text(
+                    item.device.address,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                )
+                Text(
+                    "New name: ${item.newName}",
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                )
+                Text(
+                    "Previous: ${item.prevName}",
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 6.dp, top = 2.dp)
+                )
+            }
+            NameChangedEvent.OriginCase.ADAPTER -> {
+                Text(
+                    "Bluetooth Local Name Changed!",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+                Text(
+                    "New name: ${item.newName}",
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                )
+                Text(
+                    "Previous: ${item.prevName}",
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 6.dp, top = 2.dp)
+                )
+            }
+            NameChangedEvent.OriginCase.ORIGIN_NOT_SET -> {}
+        }
     }
     @Composable
     fun ConnectionStateChangedItem(

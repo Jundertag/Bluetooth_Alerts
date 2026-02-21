@@ -113,7 +113,7 @@ message UuidFoundEvent {
 }
 
 message BluetoothDevice {
-  string addresss = 1;
+  string address = 1;
   string name = 2;
   string alias = 3;
 }
